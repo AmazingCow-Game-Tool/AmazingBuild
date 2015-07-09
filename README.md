@@ -1,4 +1,4 @@
-# Amazing Buid
+# Amazing Build
 
 ## About
 ## TODO
@@ -13,7 +13,7 @@ Currently we have 6 types of objects:
 * Prefabs   : A smart object, the script will process its contents as a "new file".
 * Sprite    : Will cut all its contents into a single image.
 * Scene     : A "logical" group for Sprites and Buttons.
-* Button    : Will cut its contents in differents images.
+* Button    : Will cut its contents in different images.
 * Ignorable : Will skip the layer.
 * Unknown   : An object that was not recognizable.
 
@@ -33,18 +33,18 @@ to see how things are organized. :)
 1. Open a PSD File that will be processed in Photoshop.
 2. Open the PSDCutter.jsx in Extendscript Toolkit.
 3. Link the Extendscript Toolkit with Photoshop.
-4. Press the play button. (May be a good ideia get a cup of coffee if your
+4. Press the play button. (May be a good idea get a cup of coffee if your
 computer is not so fast :) ).
 5. Your images will be saved into a folder named Output in the same directory
 of your PSD file.
 
-#### PSD Layer Struture:
+#### PSD Layer Structure:
 The script requires a specific structure to work correctly.
 In the Top Level of the file we can have Scenes | Ignorables | Prefabs.
 In each Scene we can have Sprites | Buttons | Ignorables.
 In Sprite we **MUST** have a single group (its name isn't important and will be
 renamed by the script). Inside this group we can have anything that we want.
-In Button we **MUST** have 2 requireds groups (Normal | Pressed) and 1 optional
+In Button we **MUST** have 2 required groups (Normal | Pressed) and 1 optional
 (Disabled). The names **ARE IMPORTANT**, but the order isn't.
 In Prefabs we can have **ONLY SMARTOBJECTS**, it will be processed as being new
 files. The name **IS NOT IMPORTANT**, but **MUST NOT START** with "_".

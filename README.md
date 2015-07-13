@@ -1,9 +1,37 @@
 # Amazing Build
 
 ## About
+Amazing Build is a collection of useful programs intended to ease some cumbersome operations.
+The main motivation to this project is make the computer work hard and 
+let you do more useful/creative stuff.  
+Right now we have just PSDCutter, but some other programs is planned to be part of
+the Amazing Build suite.
+
+We hope that Amazing Build helps you...  
+And of course, it is made with <3 and a lot of coffee.
+
+If you are using Amazing Build somehow, please let us know. We gonna be very 
+proud and happy to see our work being useful to another people.  
+
+**Don't be shy, hack it...**
+
 ## TODO
+We have a very long list of things that must be done, but our time (everyone's time) 
+is very, very short. We gonna make all the planned programs as it's needed, but you
+are very welcome to help us build them.
+
+Mainly today we have planned:
+
+* GimpCutter - Like a PSDCutter but for Gimp.
+* SpriteSheetMaker - A tool to build SpriteSheets. 
+* IconMaker - A tool to make Icons for a myriad of devices. (iOS, Android, Linux, OSX, etc)
+
+ 
+## Projects using the Amazing Build:
+* Imidiar Totem - An interactive Photo Totem.
 
 
+## Amazing Build programs:
 ### PSDCutter
 #### Intro:
 PSDCutter is a small script to automate the process of cut images in a Photoshop file.
@@ -40,17 +68,23 @@ of your PSD file.
 
 #### PSD Layer Structure:
 The script requires a specific structure to work correctly.
-In the Top Level of the file we can have Scenes | Ignorables | Prefabs.
-In each Scene we can have Sprites | Buttons | Ignorables.
-In Sprite we **MUST** have a single group (its name isn't important and will be
-renamed by the script). Inside this group we can have anything that we want.
-In Button we **MUST** have 2 required groups (Normal | Pressed) and 1 optional
-(Disabled). The names **ARE IMPORTANT**, but the order isn't.
-In Prefabs we can have **ONLY SMARTOBJECTS**, it will be processed as being new
-files. The name **IS NOT IMPORTANT**, but **MUST NOT START** with "_".
-The Ignorable object is not processed at all, its name **IS IMPORTANT** and
-start with the ```"_"``` (underscore) character. Any layerset with leading
+
+* In the Top Level of the file we can have Scenes | Ignorables | Prefabs.  
+* In each Scene we can have Sprites | Buttons | Ignorables.  
+* In Sprite we **MUST** have a single group (its name isn't important and will be
+renamed by the script).  
+Inside this group we can have anything that we want.  
+* In Button we **MUST** have 2 required groups (Normal | Pressed) and 1 optional
+(Disabled).  
+The names **ARE IMPORTANT**, but the order isn't.  
+* In Prefabs we can have **ONLY SMARTOBJECTS**, it will be processed as being new
+files.  
+The name **IS NOT IMPORTANT**, but **MUST NOT START** with "_".  
+* The Ignorable object is not processed at all, its name **IS IMPORTANT** and
+start with the ```"_"``` (underscore) character.  
+Any layerset with leading
 ```"_"``` is treated as an Ignorable.
+
 
 ```
 PSD

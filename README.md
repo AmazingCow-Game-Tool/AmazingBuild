@@ -24,7 +24,7 @@ Mainly today we have planned:
 
 * GimpCutter - Like a PSDCutter but for Gimp.
 * SpriteSheetMaker - A tool to build SpriteSheets. 
-* IconMaker - A tool to make Icons for a myriad of devices. (iOS, Android, Linux, OSX, etc)
+* **[DONE]** IconMaker - A tool to make Icons for a myriad of devices. (iOS, Android, Linux, OSX, etc)
 
  
 ## Projects using the Amazing Build:
@@ -32,7 +32,11 @@ Mainly today we have planned:
 
 
 ## Amazing Build programs:
-### PSDCutter
+* PSDCutter
+* PSDIconMaker
+
+
+## PSDCutter
 #### Intro:
 PSDCutter is a small script to automate the process of cut images in a Photoshop file.
 It works visiting every "layerset" (aka group) in a PSD document and selecting its type
@@ -106,7 +110,14 @@ PSD
 ```
 
 #### Object Types:
-##### Ignorable:
-##### Sprite:
-##### Button:
-##### Prefabs:
+##### Ignorable: [TODO]
+##### Sprite: [TODO]
+##### Button: [TODO]
+##### Prefabs: [TODO]
+
+## PSDIconMaker
+#### Intro: [TODO]
+#### Usage: [TODO]
+#### Example: [TODO]
+#### Usage: [TODO]
+#### PSD Layer Structure: [TODO]

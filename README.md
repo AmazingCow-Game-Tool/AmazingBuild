@@ -35,6 +35,17 @@ Mainly today we have planned:
 * PSDCutter
 * PSDIconMaker
 
+## Amazing Build License:
+Since the Amazing Build is a aggregate of several tools itself hasn't a license per se, but all of its programs has its own license. All of them 
+are open-source licenses but some tools has more permissive licenses like BSD-3 while other has more restritive licenses like GPL-3 and so on.
+
+Please check the desired tool license and call us at [opensource@amazingcow.com](opensource@amazingcow.com) if the tool license does not fit quite well in your usage needs. :D
+
+Basically the licenses are:
+
+* PSDCutter : GPL-v3
+* PSDIconMaker : GPL-v3
+
 
 ## PSDCutter
 #### Intro:

@@ -1,1 +1,8 @@
+version 0.1:
+[Aug 29 2015] - Split the PSDCutter into two logical entities.
+                The PSDCutterCore is the functional part of the script, it 
+                contains all the logic from previous versions but is organized 
+                in the way that is callable by external code like PSDCutterGUI.
+                The PSDCutter now just calls the PSDCutterCore, so it continues
+                being callable from the ExtendedToolscript tool.
 

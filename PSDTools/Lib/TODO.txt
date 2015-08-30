@@ -1,1 +1,3 @@
 ﻿#1 Add the doxygen style of comments.
+#2 Make the PSDHelpers Object Oriented.
+#3 Some functions are making paths by its own, change to pathJoint function.

@@ -5,4 +5,5 @@ version 0.1:
                 in the way that is callable by external code like PSDCutterGUI.
                 The PSDCutter now just calls the PSDCutterCore, so it continues
                 being callable from the ExtendedToolscript tool.
-
+version 0.1.1:
+[Aug 29 2015] - Create the About UI.

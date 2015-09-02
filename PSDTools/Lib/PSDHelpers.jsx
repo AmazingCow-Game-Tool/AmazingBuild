@@ -99,7 +99,10 @@ function closeLog()
         logFile.close();
 }
 
-//COWTODO: Doxygen Comment.
+///@brief Remove all occurrences of ch from the left of str.
+///@param str The string that will be cleaned.
+///@param ch  The char that will be removed.
+///@returns A new string with the chars removed.
 function lstrip(str, ch)
 {
     index = -1;
@@ -116,7 +119,10 @@ function lstrip(str, ch)
         return "";
     return str.substr(index, str.length);
 }
-//COWTODO: Doxygen Comment.
+///@brief Remove all occurrences of ch from the right of str.
+///@param str The string that will be cleaned.
+///@param ch  The char that will be removed.
+///@returns A new string with the chars removed.
 function rstrip(str, ch)
 {
     index = str.length;
@@ -130,13 +136,18 @@ function rstrip(str, ch)
     }
     return str.substr(0, index+1);
 }
-//COWTODO: Doxygen Comment.
+///@brief Remove all occurrences of ch from the left and right of str.
+///@param str The string that will be cleaned.
+///@param ch  The char that will be removed.
+///@returns A new string with the chars removed.
 function strip(str, ch)
 {
     return rstrip(lstrip(str, ch), ch);
 }
 
-//COWTODO: Doxygen Comment.
+///@brief Remove all occurrences of whitespace char from the string.
+///@param str The string that will be cleaned.
+///@returns A new string with all whitespace removed.
 function removeSpaces(str)
 {
     while(str.indexOf(" ") != -1)
@@ -148,9 +159,12 @@ function removeSpaces(str)
 ////////////////////////////////////////////////////////////////////////////////
 // Filesystem Functions                                                       //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
+///@brief Join the paths components in the same way of python's os.path.join
+///@param A variable length of path components.
+///@returns A string with all path components joined without the trailing /.
 function pathJoin()
 {
+    //COWTODO: Today this method is very *nix centered, should we support windows?
     var fullpath = "";
     for(var i = 0; i < arguments.length -1; ++i)
     {
@@ -165,7 +179,14 @@ function pathJoin()
 ////////////////////////////////////////////////////////////////////////////////
 // Document Functions                                                         //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
+///@brief Create a new Photoshop document.
+///@param filename The filename of the new document.
+///@param width Width of the new document.
+///@param height Height of the new document.
+///@param documentActiveAfterCreation Which document will be set as the 
+///       app.activeDocument. If no document is passed, the created one
+///       is set to active.
+//@returns The new created document.
 function createDocument(filename, width, height, documentActiveAfterCreation)
 {
     var newDoc = app.documents.add(width,                     //Width of layer.
@@ -182,19 +203,27 @@ function createDocument(filename, width, height, documentActiveAfterCreation)
 
     return newDoc;
 }
-//COWTODO: Doxygen Comment.
+///@brief Save the document to a file with the extension PSD.
+//@param doc The Photoshop document that will be saved.
+//@param filename The fullpath of the file that will be created to save the doc.
+//@returns Nothing
 function saveDocument(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PHOTOSHOP , true, Extension.LOWERCASE);
 }
-//COWTODO: Doxygen Comment.
+///@brief Save the document to a file with the extension PNG.
+//@param doc The Photoshop document that will be saved.
+//@param filename The fullpath of the file that will be created to save the doc.
+//@returns Nothing
 function exportDocument(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PNG, true, Extension.LOWERCASE);
 }
-//COWTODO: Doxygen Comment.
+///@brief Close the document without save.
+//@param doc The Photoshop document that will be closed.
+//@returns Nothing
 function closeDocument(doc)
 {
     doc.close(SaveOptions.DONOTSAVECHANGES);

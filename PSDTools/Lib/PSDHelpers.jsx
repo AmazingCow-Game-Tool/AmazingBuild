@@ -186,7 +186,7 @@ function pathJoin()
 ///@param documentActiveAfterCreation Which document will be set as the 
 ///       app.activeDocument. If no document is passed, the created one
 ///       is set to active.
-//@returns The new created document.
+///@returns The new created document.
 function createDocument(filename, width, height, documentActiveAfterCreation)
 {
     var newDoc = app.documents.add(width,                     //Width of layer.
@@ -204,26 +204,26 @@ function createDocument(filename, width, height, documentActiveAfterCreation)
     return newDoc;
 }
 ///@brief Save the document to a file with the extension PSD.
-//@param doc The Photoshop document that will be saved.
-//@param filename The fullpath of the file that will be created to save the doc.
-//@returns Nothing
+///@param doc The Photoshop document that will be saved.
+///@param filename The fullpath of the file that will be created to save the doc.
+///@returns Nothing
 function saveDocument(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PHOTOSHOP , true, Extension.LOWERCASE);
 }
 ///@brief Save the document to a file with the extension PNG.
-//@param doc The Photoshop document that will be saved.
-//@param filename The fullpath of the file that will be created to save the doc.
-//@returns Nothing
+///@param doc The Photoshop document that will be saved.
+///@param filename The fullpath of the file that will be created to save the doc.
+///@returns Nothing
 function exportDocument(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PNG, true, Extension.LOWERCASE);
 }
 ///@brief Close the document without save.
-//@param doc The Photoshop document that will be closed.
-//@returns Nothing
+///@param doc The Photoshop document that will be closed.
+///@returns Nothing
 function closeDocument(doc)
 {
     doc.close(SaveOptions.DONOTSAVECHANGES);

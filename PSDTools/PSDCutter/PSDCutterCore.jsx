@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
@@ -43,7 +43,7 @@
 #include "../Lib/PSDHelpers.jsx"
 
 // Constants //
-kPSDCutterCore_Version = "0.1.1";
+kPSDCutterCore_Version = "0.1.2";
 
 function PSDCutterCore()
 {
@@ -54,10 +54,18 @@ function PSDCutterCore()
 
     this.outputPath         = null;
     this.processingCallback = null;
+
+    this.saveScenesOnFolders  = true;
+    this.savePrefabsOnFolders = true;
+
+    this._currentSaveName = "";
 };
 
 // Constants //
-PSDCutterCore.kDefaultOutputDir = (app.documents.length == 0) ? "~/Desktop/Output/" : pathJoin(app.activeDocument.path, "Output");
+PSDCutterCore.kDefaultOutputDir = (app.documents.length == 0)
+                                  ? "~/Desktop/Output/"
+                                  : pathJoin(app.activeDocument.path, "Output");
+
 PSDCutterCore.kScriptWasStopped   = 1;
 PSDCutterCore.kScriptWasCompleted = 0;
 
@@ -112,8 +120,10 @@ PSDCutterCore.prototype.run = function()
         var obj = this._sourceDoc.layers[i];
 
         //Check which type the object is.
-             if(findObjectType(obj) == ObjectType.Prefabs) this.processPrefabs(obj);
-        else if(findObjectType(obj) == ObjectType.Scene  ) this.processScene  (obj);
+        if(findObjectType(obj) == ObjectType.Prefabs)
+            this.processPrefabs(obj);
+        else if(findObjectType(obj) == ObjectType.Scene)
+            this.processScene(obj);
     }
 
     //Close the log file.
@@ -142,13 +152,31 @@ PSDCutterCore.prototype.processStep = function(msg)
 ///@seealso ObjectType
 PSDCutterCore.prototype.processScene = function(scene)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
     //Check if this scene should be processed.
     if(findObjectType(scene) == ObjectType.Ignorable)
         return;
 
     this.processStep(scene.name);
+
+    //Reset the saveName, eliminates all the settings from
+    //Prefabs if the saveScenesOnFolders is false, so scenes
+    //will keep saving right.
+    this._currentSaveName = "";
+    if(this.saveScenesOnFolders)
+    {
+        //Update the scene name.
+        this._currentSaveName = scene.name;
+
+        //Create the scene folder if it does not exists already.
+        var folder = new Folder(pathJoin(this.outputPath,
+                                         this._currentSaveName));
+        if(!folder.exists)
+            folder.create();
+    }
 
     //Iterate for each ui object and process it.
     var objectsCount = scene.layers.length;
@@ -163,7 +191,9 @@ PSDCutterCore.prototype.processScene = function(scene)
 ///@seealso ObjectType
 PSDCutterCore.prototype.processPrefabs = function(prefabs)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
     this.processStep("Processing Prefabs");
 
@@ -173,6 +203,22 @@ PSDCutterCore.prototype.processPrefabs = function(prefabs)
     for(var i = 0; i < prefabs.layers.length; ++i)
     {
         var smartObject = prefabs.layers[i];
+
+        //Reset the saveName, eliminates all the settings from
+        //Scenes if the savePrefabsOnFolders is false, so prefabs
+        //will keep saving right.
+        this._currentSaveName = "";
+        if(this.saveScenesOnFolders)
+        {
+            //Update the scene name.
+            this._currentSaveName = smartObject.name;
+
+            //Create the scene folder if it does not exists already.
+            var folder = new Folder(pathJoin(this.outputPath,
+                                             this._currentSaveName));
+            if(!folder.exists)
+                folder.create();
+        }
 
         //Check if we're dealing with a group to ignore.
         if(findObjectType(smartObject) == ObjectType.Ignorable)
@@ -205,7 +251,9 @@ PSDCutterCore.prototype.processPrefabs = function(prefabs)
 ///@seealso ObjectType
 PSDCutterCore.prototype.processObject = function(obj)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
     //Check if this scene should be processed.
     if(findObjectType(obj) == ObjectType.Ignorable)
@@ -225,7 +273,9 @@ PSDCutterCore.prototype.processObject = function(obj)
 ///@seealso ObjectType
 PSDCutterCore.prototype.processSprite = function(sprite)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
     //Get the name of sprite and insert the underscores at right locations.
     //This will transform the name of SpriteEazz to Sprite_Eazz
@@ -235,8 +285,8 @@ PSDCutterCore.prototype.processSprite = function(sprite)
 
     this.processStep(name);
 
-    var fullpath = pathJoin(this._savePath, "Sprite_" + realName + ".png");
-    this.saveLayer(sprite, fullpath, getLayerSize(sprite));
+    var spriteName = strConcat("Sprite_", realName, ".png");
+    this.saveLayer(sprite, spriteName, getLayerSize(sprite));
 
     //Just to keep the PSD organized we rename the first group of the
     //sprite group to contents. :)
@@ -253,7 +303,9 @@ PSDCutterCore.prototype.processSprite = function(sprite)
 ///@seealso ObjectType
 PSDCutterCore.prototype.processButton = function(button)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
     //Get the name of button and insert the underscores at right locations.
     //This will transform the name of ButtonEazz to Button_Eazz
@@ -268,9 +320,9 @@ PSDCutterCore.prototype.processButton = function(button)
     var disabledLayer = null;
 
     //Button save paths.
-    var normal_savePath   = pathJoin(this._savePath, "Button_" + realName + "_Normal.png");
-    var pressed_savePath  = pathJoin(this._savePath, "Button_" + realName + "_Pressed.png");
-    var disabled_savePath = pathJoin(this._savePath, "Button_" + realName + "_Disabled.png");
+    var normalName   = strConcat("Button_", realName, "_Normal.png");
+    var pressedName  = strConcat("Button_", realName, "_Pressed.png");
+    var disabledName = strConcat("Button_", realName, "_Disabled.png");
 
     //For each button state on the button, correct the name in the same
     //way did for for the button name, and call the cut for the state.
@@ -285,37 +337,49 @@ PSDCutterCore.prototype.processButton = function(button)
     }
 
     //Get the max Width and max Height of the layers.
-    var maxW = Math.max(getLayerSize(normalLayer)[0], getLayerSize(pressedLayer)[0]);
-    var maxH = Math.max(getLayerSize(normalLayer)[1], getLayerSize(pressedLayer)[1]);
+    var maxW = Math.max(getLayerSize(normalLayer)[0],
+                        getLayerSize(pressedLayer)[0]);
+    var maxH = Math.max(getLayerSize(normalLayer)[1],
+                        getLayerSize(pressedLayer)[1]);
 
-    //Is uncommon but disable layer can occurs so we must get the size of it too.
+    //Is uncommon but disable layer can
+    //occurs so we must get the size of it too.
     if(disabledLayer != null)
     {
         var maxW = Math.max(maxW, getLayerSize(disabledLayer)[0]);
         var maxH = Math.max(maxH, getLayerSize(disabledLayer)[1]);
 
         //Yep, just save the disabled layer already.
-        saveLayer(disabledLayer, disabled_savePath, [maxW, maxH]);
+        saveLayer(disabledLayer, disabledName, [maxW, maxH]);
     }
 
     //Save the normal and pressed layers.
-    this.saveLayer(pressedLayer, pressed_savePath, [maxW, maxH]);
-    this.saveLayer(normalLayer, normal_savePath, [maxW, maxH]);
+    this.saveLayer(pressedLayer, pressedName, [maxW, maxH]);
+    this.saveLayer(normalLayer,  normalName,  [maxW, maxH]);
 };
 
-PSDCutterCore.prototype.saveLayer = function(layer, fullpath, layerSize)
+PSDCutterCore.prototype.saveLayer = function(layer, saveName, layerSize)
 {
-    if(this._shouldStop) return;
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
 
-    var newDocument = createDocument("Temp.psd",   //Name of the document.
-                                     layerSize[0], //Width
-                                     layerSize[1], //Height
-                                     this._sourceDoc);   //Document that will be active after creation.
+    //Create the fullpath to save.
+    var fullpath = pathJoin(this._savePath,
+                            this._currentSaveName,
+                            saveName);
+
+    var newDocument = createDocument("Temp.psd",       //Name of the document.
+                                     layerSize[0],     //Width
+                                     layerSize[1],     //Height
+                                     this._sourceDoc); //Document that will be
+                                                       //active after creation.
 
     duplicateLayer(layer,        //Layer to duplicate.
                    newDocument,  //Document that layer will be placed.
                    false,        //Merge the layer.
-                   newDocument); //Document that will be active after duplication.
+                   newDocument); //Document that will be active
+                                 //after duplication.
 
     exportDocument(newDocument, fullpath);
     closeDocument(newDocument);

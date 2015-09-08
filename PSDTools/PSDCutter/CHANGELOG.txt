@@ -3,8 +3,8 @@
 ================================================================================
 version 0.1:
 [Aug 29 2015] - Split the PSDCutter into two logical entities.
-                The PSDCutterCore is the functional part of the script, it 
-                contains all the logic from previous versions but is organized 
+                The PSDCutterCore is the functional part of the script, it
+                contains all the logic from previous versions but is organized
                 in the way that is callable by external code like PSDCutterGUI.
                 The PSDCutter now just calls the PSDCutterCore, so it continues
                 being callable from the ExtendedToolscript tool.
@@ -16,18 +16,37 @@ version 0.1.1:
 == PSD CUTTER GUI                                                             ==
 ================================================================================
 version 0.1.2:
-[Sep 02 2015] - Update the Main Dialog to a bigger size, we previous runs 
-                we find that it was too small to check the output path 
+[Sep 02 2015] - Update the Main Dialog to a bigger size, we previous runs
+                we find that it was too small to check the output path
                 in deeply nested folders, and the script output text box
                 runs out of space very shortly, requiring that uses scrolls
                 frequently.
                 Disables the build button if no documents are open.
 
+version 0.1.3:
+[Sep 08 2015] - Add the ability to specify a Post Run Script for execution
+                when the PSDCutterCore ends the processing.
+                Add the ability to select if the Scenes and Prefabs will be
+                saved in separated folders.
+
+
 ================================================================================
 == PSD CUTTER CORE                                                            ==
 ================================================================================
 version 0.1.1
-[Sep 02 2015] - Update the run code to show an alert box if no open documents 
-                are found. 
+[Sep 02 2015] - Update the run code to show an alert box if no open documents
+                are found.
                 Put a dummy default output folder in case of no open documents
                 just to not crash the script.
+
+version 0.1.2
+[Sep 08 2015] - Add the ability to select if the Scenes and Prefabs will be
+                saved in separated folders.
+                Change the saveLayer signature, so now it just asks for the
+                save name of the layer instead of fullpath.
+
+================================================================================
+== PSD CUTTER                                                                 ==
+================================================================================
+version 0.1.2
+[Sep 08 2015] - Fix the code.

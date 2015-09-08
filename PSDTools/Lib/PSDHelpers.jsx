@@ -39,7 +39,7 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 // Constants //
-kPSDHelpers_Version = "0.1";
+kPSDHelpers_Version = "0.1.1";
 
 // Variables //
 var logFile;
@@ -99,6 +99,17 @@ function closeLog()
         logFile.close();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// String Functions                                                           //
+////////////////////////////////////////////////////////////////////////////////
+function strConcat()
+{
+    var fullStr = "";
+    for(var i = 0; i < arguments.length; ++i)
+        fullStr += arguments[i];
+    return fullStr;
+}
+
 ///@brief Remove all occurrences of ch from the left of str.
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
@@ -113,7 +124,7 @@ function lstrip(str, ch)
             index = i;
             break;
         }
-    }    
+    }
 
     if(index == -1)
         return "";
@@ -183,7 +194,7 @@ function pathJoin()
 ///@param filename The filename of the new document.
 ///@param width Width of the new document.
 ///@param height Height of the new document.
-///@param documentActiveAfterCreation Which document will be set as the 
+///@param documentActiveAfterCreation Which document will be set as the
 ///       app.activeDocument. If no document is passed, the created one
 ///       is set to active.
 ///@returns The new created document.

@@ -1,1 +1,16 @@
 
+================================================================================
+== PSD ICON MAKER CORE                                                        ==
+================================================================================
+version 0.1.1
+[Sep 09 2015] - Split the core from the old IconMaker file. So core is callable
+                from multiple ways.
+
+
+================================================================================
+== PSD CUTTER                                                                 ==
+================================================================================
+version 0.1.1
+[Sep 09 2015] - Split the core from the old IconMaker file. So core is callable
+                from multiple ways and this script continues working by calling
+                the core.

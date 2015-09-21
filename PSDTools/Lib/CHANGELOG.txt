@@ -3,4 +3,12 @@ version 0.1:
                 some helper functions.
 
 version 0.1.1
-[Set 08 2015] - Add the string concate function.
+[Set 08 2015] - Add the string concat function.
+
+version 0.1.2
+[Set 21 2015] - Change the duplicate layer method to use the
+                combination of revealAll and trim to make the
+                duplicated object centered into document.
+                This corrects an bug of the object being cut
+                a bit off the center of document.
+

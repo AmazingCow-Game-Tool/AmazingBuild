@@ -39,7 +39,7 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 // Constants //
-kPSDHelpers_Version = "0.1.1";
+kPSDHelpers_Version = "0.1.2";
 
 // Variables //
 var logFile;
@@ -252,8 +252,9 @@ function duplicateLayer(layer, intoDocument, merge, documentActiveAfterOperation
 
     app.activeDocument = intoDocument;
 
-    //COWTODO: Comment.
-    centerLayer(duplicatedLayer);
+    app.activeDocument.revealAll();
+    app.activeDocument.trim(TrimType.TRANSPARENT);
+
     if(merge)
         duplicatedLayer = duplicatedLayer.merge();
 

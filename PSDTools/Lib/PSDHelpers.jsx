@@ -39,23 +39,27 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 // Constants //
-kPSDHelpers_Version = "0.1.2";
+kPSDHelpers_Version = "0.1.4";
 
-// Variables //
-var logFile;
-
+////////////////////////////////////////////////////////////////////////////////
+// Object Type                                                                //
+////////////////////////////////////////////////////////////////////////////////
 //COWTODO: Doxygen Comment.
-var ObjectType = {
-    Prefabs   : "Prefabs",
-    Sprite    : "Sprite",
-    Scene     : "Scene",
-    Button    : "Button",
-    Ignorable : "Ignorable",
-    Unknown   : "Unknown",
+function ObjectType()
+{
+    // Empty //
 };
 
+// Constants //
+ObjectType.Prefabs   = "Prefabs";
+ObjectType.Sprite    = "Sprite";
+ObjectType.Scene     = "Scene";
+ObjectType.Button    = "Button";
+ObjectType.Ignorable = "Ignorable";
+ObjectType.Unknown   = "Unknown";
+
 //COWTODO: Doxygen Comment.
-function findObjectType(group)
+ObjectType.findObjectType = function(group)
 {
     var name = group.name;
 
@@ -66,16 +70,21 @@ function findObjectType(group)
     if(name.indexOf(ObjectType.Button) != -1) return ObjectType.Button;
 
     return ObjectType.Unknown;
-}
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// Log Functions                                                              //
+// Log                                                                        //
 ////////////////////////////////////////////////////////////////////////////////
+// Variables //
+var logFile;
+
 //COWTODO: Doxygen Comment.
 function log(str)
 {
     logFile.writeln(str);
 };
+
 //COWTODO: Doxygen Comment.
 function openLog(name, path, enabled)
 {
@@ -90,25 +99,28 @@ function openLog(name, path, enabled)
     {
          logFile = $;
     }
-}
+};
+
 //COWTODO: Doxygen Comment.
 function closeLog()
 {
     //COWTODO: Comment.
     if(logFile != $)
         logFile.close();
-}
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // String Functions                                                           //
 ////////////////////////////////////////////////////////////////////////////////
+//COWTODO: Doxygen comment.
 function strConcat()
 {
     var fullStr = "";
     for(var i = 0; i < arguments.length; ++i)
         fullStr += arguments[i];
     return fullStr;
-}
+};
 
 ///@brief Remove all occurrences of ch from the left of str.
 ///@param str The string that will be cleaned.
@@ -129,7 +141,8 @@ function lstrip(str, ch)
     if(index == -1)
         return "";
     return str.substr(index, str.length);
-}
+};
+
 ///@brief Remove all occurrences of ch from the right of str.
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
@@ -146,7 +159,8 @@ function rstrip(str, ch)
         }
     }
     return str.substr(0, index+1);
-}
+};
+
 ///@brief Remove all occurrences of ch from the left and right of str.
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
@@ -154,7 +168,7 @@ function rstrip(str, ch)
 function strip(str, ch)
 {
     return rstrip(lstrip(str, ch), ch);
-}
+};
 
 ///@brief Remove all occurrences of whitespace char from the string.
 ///@param str The string that will be cleaned.
@@ -166,6 +180,7 @@ function removeSpaces(str)
 
     return str;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Filesystem Functions                                                       //
@@ -185,11 +200,16 @@ function pathJoin()
     }
     fullpath += arguments[arguments.length -1];
     return fullpath;
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
-// Document Functions                                                         //
+// PSDDocument                                                                //
 ////////////////////////////////////////////////////////////////////////////////
+function PSDDocument()
+{
+    // Empty //
+};
+
 ///@brief Create a new Photoshop document.
 ///@param filename The filename of the new document.
 ///@param width Width of the new document.
@@ -198,7 +218,7 @@ function pathJoin()
 ///       app.activeDocument. If no document is passed, the created one
 ///       is set to active.
 ///@returns The new created document.
-function createDocument(filename, width, height, documentActiveAfterCreation)
+PSDDocument.create = function(filename, width, height, documentActiveAfterCreation)
 {
     var newDoc = app.documents.add(width,                     //Width of layer.
                                    height,                    //Height of layer.
@@ -213,42 +233,51 @@ function createDocument(filename, width, height, documentActiveAfterCreation)
         app.activeDocument = documentActiveAfterCreation;
 
     return newDoc;
-}
+};
+
 ///@brief Save the document to a file with the extension PSD.
 ///@param doc The Photoshop document that will be saved.
 ///@param filename The fullpath of the file that will be created to save the doc.
 ///@returns Nothing
-function saveDocument(doc, filename)
+PSDDocument.save = function(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PHOTOSHOP , true, Extension.LOWERCASE);
-}
+};
+
 ///@brief Save the document to a file with the extension PNG.
 ///@param doc The Photoshop document that will be saved.
 ///@param filename The fullpath of the file that will be created to save the doc.
 ///@returns Nothing
-function exportDocument(doc, filename)
+PSDDocument.export = function(doc, filename)
 {
     var file = new File(filename);
     doc.saveAs(file, SaveDocumentType.PNG, true, Extension.LOWERCASE);
-}
+};
+
 ///@brief Close the document without save.
 ///@param doc The Photoshop document that will be closed.
 ///@returns Nothing
-function closeDocument(doc)
+PSDDocument.close = function(doc)
 {
     doc.close(SaveOptions.DONOTSAVECHANGES);
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Layer Functions                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //COWTODO: Doxygen Comment.
-function duplicateLayer(layer, intoDocument, merge, documentActiveAfterOperation)
+function PSDLayer()
 {
-    //Duplicate the layer into the document
-    //and merge if needed.
-    var duplicatedLayer = layer.duplicate(intoDocument, ElementPlacement.INSIDE);
+    // Empty //
+};
+
+//COWTODO: Doxygen Comment.
+PSDLayer.duplicate = function(layer, intoDocument, merge, documentActiveAfterOperation)
+{
+    //Duplicate the layer into the document and merge if needed.
+    var duplicatedLayer = layer.duplicate(intoDocument,
+                                          ElementPlacement.INSIDE);
 
     app.activeDocument = intoDocument;
 
@@ -262,9 +291,10 @@ function duplicateLayer(layer, intoDocument, merge, documentActiveAfterOperation
         app.activeDocument = documentActiveAfterOperation;
 
     return duplicatedLayer;
-}
+};
+
 //COWTODO: Doxygen Comment.
-function setLayerPosition(layer, x, y)
+PSDLayer.setPosition = function(layer, x, y)
 {
     var pos = getLayerPosition(layer);
 
@@ -272,32 +302,38 @@ function setLayerPosition(layer, x, y)
     pos[1] = y - pos[1];
 
     layer.translate(pos[0], pos[1]);
-}
+};
+
 //COWTODO: Doxygen Comment.
-function getLayerPosition(layer)
+PSDLayer.getPosition = function(layer)
 {
     return [layer.bounds[0].value, layer.bounds[1].value];
-}
+};
+
 //COWTODO: Doxygen Comment.
-function getLayerSize(layer)
+PSDLayer.getSize = function(layer)
 {
-    var pos = getLayerPosition(layer);
+    var pos = PSDLayer.getPosition(layer);
     return [Math.abs(pos[0] - layer.bounds[2].value),
             Math.abs(pos[1] - layer.bounds[3].value)];
-}
+};
+
 //COWTODO: Doxygen Comment.
-function centerLayer(layer)
+PSDLayer.center = function(layer)
 {
     var docW      = app.activeDocument.width;
     var docH      = app.activeDocument.height;
     var docCenter = [docW / 2, docH / 2];
 
-    var layerPos    = getLayerPosition(layer);
-    var layerSize   = getLayerSize(layer);
+    var layerPos    = PSDLayer.getPosition(layer);
+    var layerSize   = PSDLayer.getSize(layer);
     var layerCenter = [layerSize[0] / 2, layerSize[1] / 2];
 
-    setLayerPosition(layer, docCenter[0], docCenter[1]);
-    setLayerPosition(layer,
-                     docCenter[0] - layerCenter[0],
-                     docCenter[1] - layerCenter[1]);
-}
+    PSDLayer.setPosition(layer,
+                         docCenter[0],
+                         docCenter[1]);
+
+    PSDLayer.setPosition(layer,
+                         docCenter[0] - layerCenter[0],
+                         docCenter[1] - layerCenter[1]);
+};

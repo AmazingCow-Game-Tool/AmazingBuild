@@ -45,6 +45,10 @@ version 0.1.2
                 Change the saveLayer signature, so now it just asks for the
                 save name of the layer instead of fullpath.
 
+version 0.1.3
+[Sep 24 2015] - Make PSDCutterCore use the new PSDHelpers (v0.1.4).
+                Fix some bugs on Button's disabledLayer settings.
+
 ================================================================================
 == PSD CUTTER                                                                 ==
 ================================================================================

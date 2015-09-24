@@ -43,7 +43,7 @@
 #include "../Lib/PSDHelpers.jsx"
 
 // Constants //
-kPSDCutterCore_Version = "0.1.2";
+kPSDCutterCore_Version = "0.1.3";
 
 function PSDCutterCore()
 {
@@ -120,9 +120,9 @@ PSDCutterCore.prototype.run = function()
         var obj = this._sourceDoc.layers[i];
 
         //Check which type the object is.
-        if(findObjectType(obj) == ObjectType.Prefabs)
+        if(ObjectType.findObjectType(obj) == ObjectType.Prefabs)
             this.processPrefabs(obj);
-        else if(findObjectType(obj) == ObjectType.Scene)
+        else if(ObjectType.findObjectType(obj) == ObjectType.Scene)
             this.processScene(obj);
     }
 
@@ -157,7 +157,7 @@ PSDCutterCore.prototype.processScene = function(scene)
         return;
 
     //Check if this scene should be processed.
-    if(findObjectType(scene) == ObjectType.Ignorable)
+    if(ObjectType.findObjectType(scene) == ObjectType.Ignorable)
         return;
 
     this.processStep(scene.name);
@@ -221,7 +221,7 @@ PSDCutterCore.prototype.processPrefabs = function(prefabs)
         }
 
         //Check if we're dealing with a group to ignore.
-        if(findObjectType(smartObject) == ObjectType.Ignorable)
+        if(ObjectType.findObjectType(smartObject) == ObjectType.Ignorable)
             continue;
 
         //Open a smartobject.
@@ -256,12 +256,12 @@ PSDCutterCore.prototype.processObject = function(obj)
         return;
 
     //Check if this scene should be processed.
-    if(findObjectType(obj) == ObjectType.Ignorable)
+    if(ObjectType.findObjectType(obj) == ObjectType.Ignorable)
         return;
 
-    if(findObjectType(obj) == ObjectType.Sprite)
+    if(ObjectType.findObjectType(obj) == ObjectType.Sprite)
         this.processSprite(obj);
-    else if(findObjectType(obj) == ObjectType.Button)
+    else if(ObjectType.findObjectType(obj) == ObjectType.Button)
         this.processButton(obj);
     else
         this.processStep("Object not recognized: " + name);
@@ -286,7 +286,7 @@ PSDCutterCore.prototype.processSprite = function(sprite)
     this.processStep(name);
 
     var spriteName = strConcat("Sprite_", realName, ".png");
-    this.saveLayer(sprite, spriteName, getLayerSize(sprite));
+    this.saveLayer(sprite, spriteName, PSDLayer.getSize(sprite));
 
     //Just to keep the PSD organized we rename the first group of the
     //sprite group to contents. :)
@@ -337,20 +337,20 @@ PSDCutterCore.prototype.processButton = function(button)
     }
 
     //Get the max Width and max Height of the layers.
-    var maxW = Math.max(getLayerSize(normalLayer)[0],
-                        getLayerSize(pressedLayer)[0]);
-    var maxH = Math.max(getLayerSize(normalLayer)[1],
-                        getLayerSize(pressedLayer)[1]);
+    var maxW = Math.max(PSDLayer.getSize(normalLayer)[0],
+                        PSDLayer.getSize(pressedLayer)[0]);
+    var maxH = Math.max(PSDLayer.getSize(normalLayer)[1],
+                        PSDLayer.getSize(pressedLayer)[1]);
 
     //Is uncommon but disable layer can
     //occurs so we must get the size of it too.
     if(disabledLayer != null)
     {
-        var maxW = Math.max(maxW, getLayerSize(disabledLayer)[0]);
-        var maxH = Math.max(maxH, getLayerSize(disabledLayer)[1]);
+        var maxW = Math.max(maxW, PSDLayer.getSize(disabledLayer)[0]);
+        var maxH = Math.max(maxH, PSDLayer.getSize(disabledLayer)[1]);
 
         //Yep, just save the disabled layer already.
-        saveLayer(disabledLayer, disabledName, [maxW, maxH]);
+        this.saveLayer(disabledLayer, disabledName, [maxW, maxH]);
     }
 
     //Save the normal and pressed layers.
@@ -369,18 +369,20 @@ PSDCutterCore.prototype.saveLayer = function(layer, saveName, layerSize)
                             this._currentSaveName,
                             saveName);
 
-    var newDocument = createDocument("Temp.psd",       //Name of the document.
-                                     layerSize[0],     //Width
-                                     layerSize[1],     //Height
-                                     this._sourceDoc); //Document that will be
-                                                       //active after creation.
+    var newDocument = PSDDocument.create(
+                        "Temp.psd",       //Name of the document.
+                        layerSize[0],     //Width
+                        layerSize[1],     //Height
+                        this._sourceDoc); //Document that will be
+                                          //active after creation.
 
-    duplicateLayer(layer,        //Layer to duplicate.
-                   newDocument,  //Document that layer will be placed.
-                   false,        //Merge the layer.
-                   newDocument); //Document that will be active
-                                 //after duplication.
+    PSDLayer.duplicate(
+                layer,        //Layer to duplicate.
+                newDocument,  //Document that layer will be placed.
+                false,        //Merge the layer.
+                newDocument); //Document that will be active
+                              //after duplication.
 
-    exportDocument(newDocument, fullpath);
-    closeDocument(newDocument);
+    PSDDocument.export(newDocument, fullpath);
+    PSDDocument.close(newDocument);
 };

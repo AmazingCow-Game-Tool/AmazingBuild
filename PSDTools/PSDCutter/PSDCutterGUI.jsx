@@ -134,11 +134,13 @@ var createPostRunPanel = function()
 {
     //Create the PostRun Panel.
     addPanel(dialog, "postRunPanel", "Post Run");
+
     //Create the PostRun Group.
     with(dialog)
     {
         addGroup(postRunPanel, "postRunGroup");
     }
+
     //Create the PostRun UI elements.
     with(dialog.postRunPanel)
     {
@@ -233,7 +235,8 @@ var createGUI = function()
 ////////////////////////////////////////////////////////////////////////////////
 // Button Callbacks                                                           //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
+///@brief Callback for when the Build Button gets pressed.
+///@returns None
 var onBuildButtonPressed = function()
 {
     //Check if the data fields have valid data.
@@ -278,7 +281,8 @@ var onBuildButtonPressed = function()
     }
 }
 
-//COWTODO: Comment.
+///@brief Callback for when Exit Button gets pressed.
+///@returns None
 var onExitButtonPressed = function()
 {
     //Disable the exit button.
@@ -292,7 +296,8 @@ var onExitButtonPressed = function()
 
     dialog.close();
 }
-//COWTODO: Comment.
+///@brief Callback for when ... Button of Output gets pressed.
+///@returns None
 var onOutputBrowseButtonPressed = function()
 {
     var retVal = Folder.selectDialog();
@@ -300,6 +305,8 @@ var onOutputBrowseButtonPressed = function()
         dialog.configPanel.outputGroup.textField.text = retVal;
 }
 
+///@brief Callback for when ... Button of Pos Run Script gets pressed.
+///@returns None
 var onPostRunBrowseButtonPressed = function()
 {
     var retVal = File.openDialog();
@@ -311,7 +318,8 @@ var onPostRunBrowseButtonPressed = function()
 }
 
 
-//COWTODO: Comment.
+///@brief Callback for when About Button gets pressed.
+///@returns None
 var onAboutButtonPressed = function()
 {
     msg  = "PSDCutter:\n";
@@ -353,7 +361,8 @@ var onAboutButtonPressed = function()
 ////////////////////////////////////////////////////////////////////////////////
 // PSDCutterCore Callbacks                                                   //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
+///@brief Callback for when a processing step of PSDCutterCore is executed.
+///@returns None
 var onProcessingCallback = function(msg)
 {
     dialog.outputPanel.outputGroup.textField.text += msg + "\n";
@@ -362,7 +371,8 @@ var onProcessingCallback = function(msg)
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Functions                                                           //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
+///@brief Validate the data filled in text boxes.
+///@returns true If all data is correct, false otherwise.
 var checkDialogDataFields = function()
 {
     //Check if the output path is valid.
@@ -407,7 +417,6 @@ var checkDialogDataFields = function()
 ////////////////////////////////////////////////////////////////////////////////
 // Script Initialization                                                      //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: COMMENT.
 function main()
 {
     createGUI();

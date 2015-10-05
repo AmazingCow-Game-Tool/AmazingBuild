@@ -44,7 +44,8 @@ kPSDHelpers_Version = "0.1.4";
 ////////////////////////////////////////////////////////////////////////////////
 // Object Type                                                                //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
+///@brief ObjectType is a handy object that let us have information of what
+///kind of object a Photoshop layer is representing.
 function ObjectType()
 {
     // Empty //
@@ -58,7 +59,11 @@ ObjectType.Button    = "Button";
 ObjectType.Ignorable = "Ignorable";
 ObjectType.Unknown   = "Unknown";
 
-//COWTODO: Doxygen Comment.
+///@brief Based on the Photoshop layer name it will determine which type
+///of object the layer is representing.
+///@param group A Photoshop's group or layer.
+///@returns The type of the object or Unknown if can't be
+///determined by layer's name.
 ObjectType.findObjectType = function(group)
 {
     var name = group.name;
@@ -79,17 +84,27 @@ ObjectType.findObjectType = function(group)
 // Variables //
 var logFile;
 
-//COWTODO: Doxygen Comment.
+///@brief Write the string into log file.
+///@param str The string that will be write.
+///@returns Nothing.
 function log(str)
 {
     logFile.writeln(str);
 };
 
-//COWTODO: Doxygen Comment.
-function openLog(name, path, enabled)
+///@brief Create and open the log file let it write for writing.
+///@param name File name of the log.
+///@param path The fullpath without the name of the log.
+///@enabled logOnDisk A boolean indicating if log will be write on disk.
+///@returns Nothing.
+function openLog(name, path, logOnDisk)
 {
-    //COWTODO: Comment.
-    if(enabled)
+    //We have two options of logging.
+    //  1 - Is to write the log on a normal
+    //      file that will be write on disk.
+    //  2 - Is to log on console i.e no file will
+    //      be created but we can continue logging.
+    if(logOnDisk)
     {
         logFile = File(path + name + ".txt");
         $.writeln(logFile.absoluteURI);
@@ -97,14 +112,18 @@ function openLog(name, path, enabled)
     }
     else
     {
-         logFile = $;
+        //This will enable we write the messages to
+        //console with logFile.writeln(.....) since
+        //the $ object will aliased to logFile.
+        logFile = $;
     }
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Close the log file.
+///@returns Nothing.
+///@see openLog
 function closeLog()
 {
-    //COWTODO: Comment.
     if(logFile != $)
         logFile.close();
 };
@@ -113,7 +132,9 @@ function closeLog()
 ////////////////////////////////////////////////////////////////////////////////
 // String Functions                                                           //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen comment.
+///@brief Concat several strings. Like the python's "".join(list_of_strings).
+///@param A variable length of strings.
+///@returns A concatenated string.
 function strConcat()
 {
     var fullStr = "";
@@ -266,14 +287,21 @@ PSDDocument.close = function(doc)
 ////////////////////////////////////////////////////////////////////////////////
 // Layer Functions                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
 function PSDLayer()
 {
     // Empty //
 };
 
-//COWTODO: Doxygen Comment.
-PSDLayer.duplicate = function(layer, intoDocument, merge, documentActiveAfterOperation)
+///@brief Duplicates a layer into a document.
+///@param layer The layer that will be duplicated.
+///@param intoDocument The Document that will receive the layer.
+///@param merge If the layer after be duplicated will be merged
+///       into a single layer.
+///@param documentActiveAfterOperation The document that will
+///       be set as active after the duplicate operation be over.
+///@returns The duplicated layer.
+PSDLayer.duplicate = function(layer, intoDocument,
+                              merge, documentActiveAfterOperation)
 {
     //Duplicate the layer into the document and merge if needed.
     var duplicatedLayer = layer.duplicate(intoDocument,
@@ -293,7 +321,9 @@ PSDLayer.duplicate = function(layer, intoDocument, merge, documentActiveAfterOpe
     return duplicatedLayer;
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Given the layer this function will set it's position.
+///@param layer The layer that will be positioned.
+///@returns Nothing.
 PSDLayer.setPosition = function(layer, x, y)
 {
     var pos = getLayerPosition(layer);
@@ -304,13 +334,17 @@ PSDLayer.setPosition = function(layer, x, y)
     layer.translate(pos[0], pos[1]);
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Get the x and y coordinates of the layer.
+///@param The layer that will be queried.
+///@returns An array of two floats representing the x and y.
 PSDLayer.getPosition = function(layer)
 {
     return [layer.bounds[0].value, layer.bounds[1].value];
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Get the width and height of the layer.
+///@param The layer that will be queried.
+///@returns An array of two floats representing the width and height.
 PSDLayer.getSize = function(layer)
 {
     var pos = PSDLayer.getPosition(layer);
@@ -318,7 +352,10 @@ PSDLayer.getSize = function(layer)
             Math.abs(pos[1] - layer.bounds[3].value)];
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Given the layer this function will set it's position
+///on the center of the active document.
+///@param layer The layer that will be centered.
+///@returns Nothing.
 PSDLayer.center = function(layer)
 {
     var docW      = app.activeDocument.width;

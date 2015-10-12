@@ -338,15 +338,14 @@ var onAboutButtonPressed = function()
     infoDialog = new Window("dialog", "Info");
     infoDialog.frameLocation = [100, 100];
 
+
     //Label.
     infoDialog.label = infoDialog.add("edittext",
                                        undefined,
                                        msg,
                                        {multiline:true});
 
-    infoDialog.label.graphics.font = ScriptUI.newFont("Droid Sans Mono",
-                                                      ScriptUI.FontStyle.BOLD,
-                                                      12);
+    infoDialog.label.graphics.font = ScriptUI.newFont("dialog:12");
     infoDialog.label.preferredSize = [390, 170];
 
     //Close Button.

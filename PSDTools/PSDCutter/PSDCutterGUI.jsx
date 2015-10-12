@@ -43,7 +43,7 @@
 #include "PSDCutterCore.jsx"
 
 // Constants //
-kPSDCutterGUI_Version = "0.1.3";
+kPSDCutterGUI_Version = "0.1.4";
 
 // Vars //
 var cutterCore     = null;

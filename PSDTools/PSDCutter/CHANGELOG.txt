@@ -29,6 +29,10 @@ version 0.1.3:
                 Add the ability to select if the Scenes and Prefabs will be
                 saved in separated folders.
 
+version 0.1.4:
+[oct 12 2015] - Fix bug on about dialog of PSDCutterGUI.
+                The about dialog is failing due a hardcoded font that was
+                maybe not preent in all systems.
 
 ================================================================================
 == PSD CUTTER CORE                                                            ==

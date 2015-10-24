@@ -40,40 +40,122 @@
 //----------------------------------------------------------------------------//
 
 //Import the needed helper functions.
-#include "../Lib/PSDHelpers.jsx"
+#include "../Lib/PSDHelpers.jsx"       //General Helpers.
+#include "./PSDCutterCore/Helpers.jsx" //Helpers for PSDCutterCore.
 
-// Constants //
-kPSDCutterCore_Version = "0.1.3";
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//  PUBLIC STUFF                                                              //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+// Classes                                                                    //
+////////////////////////////////////////////////////////////////////////////////
 function PSDCutterCore()
 {
-    // Variables //
-    this._sourceDoc;
-    this._savePath;
+    // Private Vars //
+    //The document that will be processed.
+    //Needed because some PS functions will
+    //change the Active document.
+    this._sourceDoc = null;
+
+    //First part of path of saved images.
+    //Like (~/SomePath). This is always set.
+    this._savePath = null;
+    //Second part of path of saved images.
+    //If PSDCutterCore is set to save scenes and
+    //prefabs in separated folders this will contains
+    //the name of Scene or Prefab.
+    //In conjunction with the this._savePath it'll
+    //look like (~/SomePath/NameOfSceneOrPrefab).
+    this._currentSaveName = null;
+
+    //Script was stopped by outside request.
+    //Every method check it and if it's true
+    //returns immediately
     this._shouldStop = false;
 
-    this.outputPath         = null;
+
+    // Public Vars //
+    //Paths.
+    ///@brief We're is to save the script's output.
+    this.outputPath = null;
+
+    //Saving.
+    ///@brief Save all inner objects of
+    ///ObjectType.Scene into separated folder.
+    ///@see ObjectType, savePrefabsOnFolders.
+    this.saveScenesOnFolders = false;
+    ///@brief Save all inner objects of
+    ///ObjectType.Prefab into separated folder.
+    ///@see ObjectType, this.savePrefabsOnFolders.
+    this.savePrefabsOnFolders = false;
+    ///@brief True if PSDCutter should generate the logs.
+    ///The location of log file is the same location of the output folder.
+    ///@see this.outputPath
+    this.saveLog              = false;
+
+    //Layers.
+    ///@brief If an layer object contains a layer named
+    ///the PSDCutterCore.kBoundingBoxLayerName and this
+    ///var is set to true it will be cut with the size of
+    ///the boundingBox layer. The layer contents will be centered.
+    ///@see this.implicityButtonsBoundingBoxes, this.addPadding.
+    this.respectBoundingBoxLayers = false;
+    ///@brief Makes the layer object of type ObjectType.Button
+    ///behaves as if it has a layer named PSDCutterCore.kBoundingBoxLayerName.
+    ///@see this.respectBoundingBoxLayers, this.addPadding.
+    this.implicityButtonsBoundingBoxes = false;
+    ///@brief If true add a PSDCutterCore.kDefaultPadding pixels to each
+    ///side of the cut image. This is helpful to avoid some possible image
+    ///artifacts.
+    ///@see this.respectBoundingBoxLayers, this.implicityButtonsBoundingBoxes.
+    this.addPadding= false;
+
+    //Callbacks.
+    //COWTODO: Add comment.
     this.processingCallback = null;
-
-    this.saveScenesOnFolders  = true;
-    this.savePrefabsOnFolders = true;
-
-    this._currentSaveName = "";
 };
 
-// Constants //
-PSDCutterCore.kDefaultOutputDir = (app.documents.length == 0)
-                                  ? "~/Desktop/Output/"
-                                  : pathJoin(app.activeDocument.path, "Output");
 
-PSDCutterCore.kScriptWasStopped   = 1;
-PSDCutterCore.kScriptWasCompleted = 0;
+////////////////////////////////////////////////////////////////////////////////
+// Constants                                                                  //
+////////////////////////////////////////////////////////////////////////////////
 
+///@brief Constant that PSDCutterCore.run() returns
+///when a outside stop request was made.
+///@see PSDCutterCore.stop(), PSDCutterCore.run().
+PSDCutterCore.kScriptWasStopped   = 1000;
+///@brief Constant that PSDCutterCore.run() returns
+///when script was completed.
+///@see PSDCutterCore.stop(), PSDCutterCore.run().
+PSDCutterCore.kScriptWasCompleted = 2000;
+
+///@brief Padding that is added to the cut image if
+///PSDCutterCore.addPadding is set to true.
+///@see PSDCutterCore.addPadding.
+PSDCutterCore.kDefaultPadding = [2, 2];
+
+///@brief A default path for saved images.
+PSDCutterCore.kDefaultOutputPath = (app.documents.length == 0)
+                                    ? "~/Desktop/Output/"
+                                    : PSDHelpers.FS.pathJoin(app.activeDocument.path, "Output");
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Methods                                                                    //
+////////////////////////////////////////////////////////////////////////////////
 ///@brief Iterate for all objects of a PSDFile
 ///and process it based in object type.
-///@returns 0
+///@returns PSDCutterCore.kScriptWasCompleted if script was complete
+///of PSDCutterCore.kScriptWasStopped if the script was stopped by
+///an outside request.
+///@see PSDCutterCore.kScriptWasCompleted, PSDCutterCore.kScriptWasStopped,
+///PSDCutterCore.stop()
 PSDCutterCore.prototype.run = function()
 {
+    //There is no document opened - Cannot continue.
     if(app.documents.length == 0)
     {
         alert("No document open... Exiting.");
@@ -86,25 +168,47 @@ PSDCutterCore.prototype.run = function()
     //Set the reference to current document.
     this._sourceDoc = app.activeDocument;
 
-    //Create the Output folder at same location of
-    //source document. If the folder exists delete all its content.
-    if(this.outputPath == null)
-        this.outputPath = PSDCutterCore.kDefaultOutputDir;
-
-    var folder = new Folder(this.outputPath);
-    if(folder.exists)
-        folder.remove();
-    folder.create();
-
-    //Define the save path of the output images to be a path of output folder.
+    //Create the output folder and define the save path
+    //of the output images to be a path of output folder.
+    var folder = PSDHelpers.FS.createFolder(this.outputPath);
     this._savePath = folder.fullName;
 
-    //Open the log file.
-    openLog(this._sourceDoc.name, this._savePath, false);
+    //Open the log file;
+    //COWTODO: Add the log stuff.
 
+    //Reset the save path, for the cases that
+    //the save on folders are false.
+    this._resetCurrentSavePath();
+
+    //Process.
+    this._startProcessing();
+
+    return PSDCutterCore.kScriptWasCompleted;
+};
+
+PSDCutterCore.prototype.stop = function()
+{
+    this._processStep("Stopping...");
+    this._shouldStop = true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//  PRIVATE STUFF                                                             //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+
+PSDCutterCore.prototype._processStep = function(msg)
+{}
+
+//COWTODO: Add the doxygen comments.
+PSDCutterCore.prototype._startProcessing = function()
+{
     //Iterate for each top object and process it.
-    var objectsCount = activeDocument.layers.length;
-    for(var i  = 0; i < objectsCount; ++i)
+    for(var i  = 0; i < this._sourceDoc.layers.length; ++i)
     {
         if(this._shouldStop)
             return PSDCutterCore.kScriptWasStopped;
@@ -113,46 +217,28 @@ PSDCutterCore.prototype.run = function()
         //Here are 3 acceptable types.
         // - ObjectType.Prefab
         // - ObjectType.Scene
-        // - ObjectType.Ignoreable
-        //
+        // - ObjectType.Ignorable
         //Since we're at top level, we're going
         //actually ignore the ObjectType.Ignorable.
         var obj = this._sourceDoc.layers[i];
 
         //Check which type the object is.
         if(ObjectType.findObjectType(obj) == ObjectType.Prefabs)
-            this.processPrefabs(obj);
+            this._processPrefabs(obj);
         else if(ObjectType.findObjectType(obj) == ObjectType.Scene)
-            this.processScene(obj);
+            this._processScene(obj);
     }
 
-    //Close the log file.
-    closeLog();
-
-    return PSDCutterCore.kScriptWasCompleted;
 };
-
-PSDCutterCore.prototype.stop = function()
-{
-    this.processStep("Stopping...");
-    this._shouldStop = true;
-}
-
-PSDCutterCore.prototype.processStep = function(msg)
-{
-    if(this.processingCallback != null)
-        this.processingCallback(msg);
-    log(msg);
-}
 
 ///@brief Iterate for all objects of a Scene
 ///and process it based in object type.
 ///@param scene A "layerset" with ObjectType.Scene
 ///@returns None
 ///@seealso ObjectType
-PSDCutterCore.prototype.processScene = function(scene)
+PSDCutterCore.prototype._processScene = function(scene)
 {
-    //Script was stopped by outside request. Do not do anything
+    //Script was stopped by outside request. Do not do anything.
     if(this._shouldStop)
         return;
 
@@ -160,28 +246,22 @@ PSDCutterCore.prototype.processScene = function(scene)
     if(ObjectType.findObjectType(scene) == ObjectType.Ignorable)
         return;
 
-    this.processStep(scene.name);
+    //Reset the fullpath for save items.
+    this._resetCurrentSavePath();
 
-    //Reset the saveName, eliminates all the settings from
-    //Prefabs if the saveScenesOnFolders is false, so scenes
-    //will keep saving right.
-    this._currentSaveName = "";
+    //If is defined to save the scene into
+    //a separated folder create one now.
     if(this.saveScenesOnFolders)
     {
-        //Update the scene name.
-        this._currentSaveName = scene.name;
+        var fullpath = PSDHelpers.FS.pathJoin(this.outputPath, scene.name);
+        PSDHelpers.FS.createFolder(fullpath);
 
-        //Create the scene folder if it does not exists already.
-        var folder = new Folder(pathJoin(this.outputPath,
-                                         this._currentSaveName));
-        if(!folder.exists)
-            folder.create();
+        this._currentSaveName = scene.name;
     }
 
-    //Iterate for each ui object and process it.
-    var objectsCount = scene.layers.length;
-    for(var i = 0; i < objectsCount; ++i)
-        this.processObject(scene.layers[i]);
+    //Iterate for each element of scene and process it.
+    for(var i = 0; i < scene.layers.length; ++i)
+        this._processObject(scene.layers[i]);
 };
 
 ///@brief Iterate of all objects in Prefabs
@@ -189,67 +269,15 @@ PSDCutterCore.prototype.processScene = function(scene)
 ///@param prefabs A "layerset" with ObjectType.Prefabs
 ///@returns None
 ///@seealso ObjectType
-PSDCutterCore.prototype.processPrefabs = function(prefabs)
-{
-    //Script was stopped by outside request. Do not do anything
-    if(this._shouldStop)
-        return;
-
-    this.processStep("Processing Prefabs");
-
-    //Save a reference for the current document.
-    var originalDoc = app.activeDocument;
-
-    for(var i = 0; i < prefabs.layers.length; ++i)
-    {
-        var smartObject = prefabs.layers[i];
-
-        //Reset the saveName, eliminates all the settings from
-        //Scenes if the savePrefabsOnFolders is false, so prefabs
-        //will keep saving right.
-        this._currentSaveName = "";
-        if(this.saveScenesOnFolders)
-        {
-            //Update the scene name.
-            this._currentSaveName = smartObject.name;
-
-            //Create the scene folder if it does not exists already.
-            var folder = new Folder(pathJoin(this.outputPath,
-                                             this._currentSaveName));
-            if(!folder.exists)
-                folder.create();
-        }
-
-        //Check if we're dealing with a group to ignore.
-        if(ObjectType.findObjectType(smartObject) == ObjectType.Ignorable)
-            continue;
-
-        //Open a smartobject.
-        this._sourceDoc.activeLayer = prefabs.layers[i];
-        var idAction = stringIDToTypeID("placedLayerEditContents");
-        var idDesc   = new ActionDescriptor();
-        executeAction(idAction, idDesc, DialogModes.NO);
-
-        var currDoc = app.activeDocument;
-        this._sourceDoc = currDoc;
-
-        //Process the objects inside the smartobject.
-        for(var j = 0; j < currDoc.layers.length; ++j)
-            this.processObject(currDoc.layers[j]);
-
-        currDoc.close(SaveOptions.DONOTSAVECHANGES);
-        this._sourceDoc = originalDoc
-    }
-
-    this._sourceDoc = originalDoc;
-};
+PSDCutterCore.prototype._processPrefabs = function(prefabs)
+{};
 
 ///@brief Process (Save its contents) an object.
 ///@param prefabs A "layerset" with ObjectType.Sprite,
 ///ObjectType.Sprite, ObjectType.Button.
 ///@returns None
 ///@seealso ObjectType
-PSDCutterCore.prototype.processObject = function(obj)
+PSDCutterCore.prototype._processObject = function(obj)
 {
     //Script was stopped by outside request. Do not do anything
     if(this._shouldStop)
@@ -259,38 +287,40 @@ PSDCutterCore.prototype.processObject = function(obj)
     if(ObjectType.findObjectType(obj) == ObjectType.Ignorable)
         return;
 
+    //Process the object based and it's type.
     if(ObjectType.findObjectType(obj) == ObjectType.Sprite)
-        this.processSprite(obj);
+        this._processSprite(obj);
     else if(ObjectType.findObjectType(obj) == ObjectType.Button)
-        this.processButton(obj);
-    else
-        this.processStep("Object not recognized: " + name);
+        this._processButton(obj);
 };
 
 ///@brief Process (Save its contents) a Sprite.
 ///@param prefabs A "layerset" with ObjectType.Sprite
 ///@returns None
 ///@seealso ObjectType
-PSDCutterCore.prototype.processSprite = function(sprite)
+PSDCutterCore.prototype._processSprite = function(sprite)
 {
     //Script was stopped by outside request. Do not do anything
     if(this._shouldStop)
         return;
 
-    //Get the name of sprite and insert the underscores at right locations.
-    //This will transform the name of SpriteEazz to Sprite_Eazz
-    var name     = sprite.name;
-    var index    = name.indexOf("Sprite");
-    var realName = name.substr(index + "Sprite".length, name.length);
-
-    this.processStep(name);
-
-    var spriteName = strConcat("Sprite_", realName, ".png");
-    this.saveLayer(sprite, spriteName, PSDLayer.getSize(sprite));
+    //Canonize and build the save name.
+    //So the layer could be named anything like:
+    //  Type_Name | TypeName | NameType | Name_Type
+    //  (underscores doesn't matter here)
+    //That the output will be:
+    //  Type_Name.png
+    var canonizedName = ObjectType.canonizeName(sprite.name);
+    var saveName      = PSDHelpers.String.concat(canonizedName, ".png");
 
     //Just to keep the PSD organized we rename the first group of the
     //sprite group to contents. :)
     sprite.layers[0].name = "contents";
+
+    //Save...
+    this._saveLayer(sprite,
+                    saveName,
+                    this._getAddPadding());
 };
 
 ///@brief Process (Save its contents) a Button.
@@ -300,89 +330,129 @@ PSDCutterCore.prototype.processSprite = function(sprite)
 ///The smaller ones will be centralized.
 ///@param prefabs A "layerset" with ObjectType.Button
 ///@returns None
-///@seealso ObjectType
-PSDCutterCore.prototype.processButton = function(button)
+///@see ObjectType
+PSDCutterCore.prototype._processButton = function(button)
 {
     //Script was stopped by outside request. Do not do anything
     if(this._shouldStop)
         return;
 
-    //Get the name of button and insert the underscores at right locations.
-    //This will transform the name of ButtonEazz to Button_Eazz
-    var name     = button.name;
-    var index    = name.indexOf("Button");
-    var realName = name.substr(index + "Button".length, name.length);
+    //Canonize and build the save name.
+    //So the layer could be named anything like:
+    //  Type_Name | TypeName | NameType | Name_Type
+    //  (underscores doesn't matter here)
+    //That the output will be:
+    //  Type_Name.png
+    var canonizedName = ObjectType.canonizeName(button.name);
 
-    this.processStep(name);
+    //Button save names.
+    var normalName   = PSDHelpers.String.concat(canonizedName, "_Normal.png"  );
+    var pressedName  = PSDHelpers.String.concat(canonizedName, "_Pressed.png" );
+    var disabledName = PSDHelpers.String.concat(canonizedName, "_Disabled.png");
 
+    //The state layers.
     var normalLayer   = null;
     var pressedLayer  = null;
     var disabledLayer = null;
 
-    //Button save paths.
-    var normalName   = strConcat("Button_", realName, "_Normal.png");
-    var pressedName  = strConcat("Button_", realName, "_Pressed.png");
-    var disabledName = strConcat("Button_", realName, "_Disabled.png");
-
-    //For each button state on the button, correct the name in the same
-    //way did for for the button name, and call the cut for the state.
+    //Find and assign the state layers to the named vars.
     for(var i = 0; i < button.layers.length; ++i)
     {
         var layer = button.layers[i];
 
-        //Check the type of button
-             if(layer.name.indexOf("Normal"  ) != -1) normalLayer   = layer;
+        if     (layer.name.indexOf("Normal"  ) != -1) normalLayer   = layer;
         else if(layer.name.indexOf("Pressed" ) != -1) pressedLayer  = layer;
         else if(layer.name.indexOf("Disabled") != -1) disabledLayer = layer;
     }
 
-    //Get the max Width and max Height of the layers.
-    var maxW = Math.max(PSDLayer.getSize(normalLayer)[0],
-                        PSDLayer.getSize(pressedLayer)[0]);
-    var maxH = Math.max(PSDLayer.getSize(normalLayer)[1],
-                        PSDLayer.getSize(pressedLayer)[1]);
+    var normalLayerPadding   = [0,0];
+    var pressedLayerPadding  = [0,0];
+    var disabledLayerPadding = [0,0];
 
-    //Is uncommon but disable layer can
-    //occurs so we must get the size of it too.
-    if(disabledLayer != null)
+    if(this.implicityButtonsBoundingBoxes)
     {
-        var maxW = Math.max(maxW, PSDLayer.getSize(disabledLayer)[0]);
-        var maxH = Math.max(maxH, PSDLayer.getSize(disabledLayer)[1]);
+        //Get the layers' size.
+        var normalLayerSize   = PSDLayer.getSize(normalLayer);
+        var pressedLayerSize  = PSDLayer.getSize(pressedLayer);
+        var disabledLayerSize = PSDLayer.getSize(disabledLayer);
 
-        //Yep, just save the disabled layer already.
-        this.saveLayer(disabledLayer, disabledName, [maxW, maxH]);
+        //Get the max Width and max Height of the layers.
+        var maxW = Math.max(normalLayerSize  [0],
+                            pressedLayerSize [0],
+                            disabledLayerSize[0]);
+
+        var maxH = Math.max(normalLayerSize  [1],
+                            pressedLayerSize [1],
+                            disabledLayerSize[1]);
+
+
+        var padding = this._getAddPadding();
+
+        //Calculate the paddings...
+        var maxWithPadding = [maxW + padding[0],
+                              maxH + padding[1]];
+
+        normalLayerPadding   = [Math.abs(maxWithPadding[0] - normalLayerSize[0]),
+                                Math.abs(maxWithPadding[1] - normalLayerSize[1])];
+
+        pressedLayerPadding  = [Math.abs(maxWithPadding[0] - pressedLayerSize[0]),
+                                Math.abs(maxWithPadding[1] - pressedLayerSize[1])];
+
+        disabledLayerPadding = [Math.abs(maxWithPadding[0] - disabledLayerSize[0]),
+                                Math.abs(maxWithPadding[1] - disabledLayerSize[1])];
     }
 
-    //Save the normal and pressed layers.
-    this.saveLayer(pressedLayer, pressedName, [maxW, maxH]);
-    this.saveLayer(normalLayer,  normalName,  [maxW, maxH]);
+    //Save the layers....
+    this._saveLayer(normalLayer,   normalName,    normalLayerPadding);
+    this._saveLayer(pressedLayer,  pressedName,   pressedLayerPadding);
+    this._saveLayer(disabledLayer, disabledName,  disabledLayerPadding);
 };
 
-PSDCutterCore.prototype.saveLayer = function(layer, saveName, layerSize)
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Methods                                                             //
+////////////////////////////////////////////////////////////////////////////////
+//COWTODO: Add doxygen docs.
+PSDCutterCore.prototype._resetCurrentSavePath = function()
+{
+    this._currentSaveName = "";
+}
+
+//COWTODO: Add doxygen docs.
+PSDCutterCore.prototype._saveLayer = function(layer, saveName, padding)
 {
     //Script was stopped by outside request. Do not do anything
     if(this._shouldStop)
         return;
 
+    //Nothing to save...
+    if(layer == null)
+        return;
+
     //Create the fullpath to save.
-    var fullpath = pathJoin(this._savePath,
-                            this._currentSaveName,
-                            saveName);
+    var fullpath = PSDHelpers.FS.pathJoin(this._savePath,        //Path of output folder.
+                                          this._currentSaveName, //Path of scene|prefab if is to save on folder.
+                                          saveName);             //The actual object name.
 
-    var newDocument = PSDDocument.create(
-                        "Temp.psd",       //Name of the document.
-                        layerSize[0],     //Width
-                        layerSize[1],     //Height
-                        this._sourceDoc); //Document that will be
-                                          //active after creation.
+    var newDocument = PSDDocument.create("Temp.psd",  //Name of the document.
+                                                  1,  //Width.  (This don't matter here.)
+                                                  1,  //Height. (This don't matter here.)
+                                    this._sourceDoc); //Document that will be active after creation.
 
-    PSDLayer.duplicate(
-                layer,        //Layer to duplicate.
-                newDocument,  //Document that layer will be placed.
-                false,        //Merge the layer.
-                newDocument); //Document that will be active
-                              //after duplication.
+     PSDDocument.duplicateLayer(layer,                         //Layer to duplicate.
+                                padding,                       //OBIVOUS :O.
+                                this.respectBoundingBoxLayers, //Respect bounding box layers.
+                                newDocument,                   //Document that layer will be placed.
+                                newDocument);                  //Document that will be active after duplication.
 
     PSDDocument.export(newDocument, fullpath);
     PSDDocument.close(newDocument);
 };
+
+PSDCutterCore.prototype._getAddPadding = function()
+{
+    if(this.addPadding)
+        return PSDCutterCore.kDefaultPadding;
+
+    return [0,0];
+}

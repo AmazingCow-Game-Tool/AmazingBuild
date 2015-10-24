@@ -40,8 +40,15 @@
 //----------------------------------------------------------------------------//
 
 //Import the needed helper functions.
+<<<<<<< HEAD
+#include "PSDCutterCore.jsx"
+
+// Constants //
+kPSDCutterGUI_Version = "0.1.4";
+=======
 #include "PSDCutterCore.jsx";    //The core functionality
 #include "PSDCutterGUI/GUI.jsx"; //The GUI creation code.
+>>>>>>> Dev
 
 // Vars //
 var _cutterCore = null;
@@ -61,7 +68,43 @@ function main()
     _gui.onBuildButtonPressedCallback = onBuildButtonPressed;
     _gui.onExitButtonPressedCallback  = onExitButtonPressed;
 
+<<<<<<< HEAD
+        //Scenes / Prefabs checkboxes.
+        var msg = "Save scenes on separated folders";
+        addCheckbox(saveFoldersGroup, "scenesCheckbox", msg);
+
+        msg = "Save prefabs on separated folders";
+        addCheckbox(saveFoldersGroup, "prefabsCheckbox", msg);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Post Run Panel                                                             //
+////////////////////////////////////////////////////////////////////////////////
+var createPostRunPanel = function()
+{
+    //Create the PostRun Panel.
+    addPanel(dialog, "postRunPanel", "Post Run");
+
+    //Create the PostRun Group.
+    with(dialog)
+    {
+        addGroup(postRunPanel, "postRunGroup");
+    }
+
+    //Create the PostRun UI elements.
+    with(dialog.postRunPanel)
+    {
+        addLabel    (postRunGroup, "label",        "Script path:");
+        addTextField(postRunGroup, "textField",    "",    [400, 20]);
+        addButton   (postRunGroup, "browseButton", "...", [40, 20]);
+
+        //Set the callback
+        postRunGroup.browseButton.onClick = onPostRunBrowseButtonPressed;
+    }
+=======
     _gui.show();
+>>>>>>> Dev
 }
 
 
@@ -100,7 +143,13 @@ function showStopDialog()
 ////////////////////////////////////////////////////////////////////////////////
 // Button Callbacks                                                           //
 ////////////////////////////////////////////////////////////////////////////////
+<<<<<<< HEAD
+///@brief Callback for when the Build Button gets pressed.
+///@returns None
+var onBuildButtonPressed = function()
+=======
 function onBuildButtonPressed()
+>>>>>>> Dev
 {
     _gui.disableButtonsForBuild();
 
@@ -109,28 +158,92 @@ function onBuildButtonPressed()
     var scenesOnFolders  = _gui.isToSaveScenesOnFolders ();
     var prefabsOnFolders = _gui.isToSavePrefabsOnFolders();
 
+<<<<<<< HEAD
+///@brief Callback for when Exit Button gets pressed.
+///@returns None
+var onExitButtonPressed = function()
+{
+    //Disable the exit button.
+    dialog.buttonPanel.exitButton.enabled = false;
+=======
     var generateLogs = _gui.isToSaveLogs();
+>>>>>>> Dev
 
     var respectBB  = _gui.isToRespectBoundingBox             ();
     var buttonsBB  = _gui.isToHaveButtonsImplicityBoundingBox();
     var addPadding = _gui.isToAddPadding                     ();
 
+<<<<<<< HEAD
+    dialog.close();
+}
+///@brief Callback for when ... Button of Output gets pressed.
+///@returns None
+var onOutputBrowseButtonPressed = function()
+{
+    var retVal = Folder.selectDialog();
+    if(retVal != null)
+        dialog.configPanel.outputGroup.textField.text = retVal;
+}
+
+///@brief Callback for when ... Button of Pos Run Script gets pressed.
+///@returns None
+var onPostRunBrowseButtonPressed = function()
+{
+    var retVal = File.openDialog();
+    if(retVal != null)
+    {
+        dialog.postRunPanel.postRunGroup.textField.text = retVal;
+        postScriptPath = retVal;
+    }
+}
+=======
 
     //Set the PSDCutterCore options.
     _cutterCore.outputPath = outpath;
+>>>>>>> Dev
 
     _cutterCore.saveScenesOnFolders  = scenesOnFolders;
     _cutterCore.savePrefabsOnFolders = prefabsOnFolders;
 
+<<<<<<< HEAD
+///@brief Callback for when About Button gets pressed.
+///@returns None
+var onAboutButtonPressed = function()
+{
+    msg  = "PSDCutter:\n";
+    msg += "   N2OMatt <n2omatt@amazingcow.com> \n";
+    msg += "   Copyright (c) 2015 - Amazing Cow \n";
+    msg += "\n";
+    msg += "   This is a free software (GPLv3) - Share/Hack it \n";
+    msg += "   Check opensource.amazingcow.com for more :) \n";
+    msg += "\n";
+    msg += "Components:\n";
+    msg += "   PSDCutterGUI  - " + kPSDCutterGUI_Version + "\n"
+    msg += "   PSDCutterCore - " + kPSDCutterCore_Version + "\n";
+    msg += "   PSDHelpers    - " + kPSDHelpers_Version;
+=======
     _cutterCore.respectBoundingBoxLayers      = respectBB;
     _cutterCore.implicityButtonsBoundingBoxes = buttonsBB;
     _cutterCore.addPadding                    = addPadding;
+>>>>>>> Dev
 
 //~     _cutterCore.processingCallback   = onProcessingCallback;
 
+<<<<<<< HEAD
+
+    //Label.
+    infoDialog.label = infoDialog.add("edittext",
+                                       undefined,
+                                       msg,
+                                       {multiline:true});
+
+    infoDialog.label.graphics.font = ScriptUI.newFont("dialog:12");
+    infoDialog.label.preferredSize = [390, 170];
+=======
 
     //Run the PSDCutterCore.
     var retVal = _cutterCore.run();
+>>>>>>> Dev
 
     //Show the completion dialog.
     if(retVal == PSDCutterCore.kScriptWasCompleted)
@@ -139,14 +252,72 @@ function onBuildButtonPressed()
         showStopDialog();
 
 
+<<<<<<< HEAD
+////////////////////////////////////////////////////////////////////////////////
+// PSDCutterCore Callbacks                                                   //
+////////////////////////////////////////////////////////////////////////////////
+///@brief Callback for when a processing step of PSDCutterCore is executed.
+///@returns None
+var onProcessingCallback = function(msg)
+{
+    dialog.outputPanel.outputGroup.textField.text += msg + "\n";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Functions                                                           //
+////////////////////////////////////////////////////////////////////////////////
+///@brief Validate the data filled in text boxes.
+///@returns true If all data is correct, false otherwise.
+var checkDialogDataFields = function()
+{
+    //Check if the output path is valid.
+    var outputPath = dialog.configPanel.outputGroup.textField.text;
+    outputPath = strip(outputPath, " ");
+
+    var tmpFolder = Folder(outputPath);
+=======
     _gui.close();
 }
 
+>>>>>>> Dev
 
 
+<<<<<<< HEAD
+    //Path is empty.
+    if(outputPath.length == 0)
+    {
+        alert("Output path is empty.");
+        return false;
+    }
+
+    //Path does not exists, so create one.
+    if(!tmpFolder.exists)
+    {
+        //Cannot create.
+        if(!tmpFolder.create())
+        {
+            str = strConcat("Output path (",
+                            outputPath,
+                            ") is invalid\nFolder cannot be created.");
+            alert(str);
+            return false;
+        }
+    }
+
+    //All data are valid.
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Script Initialization                                                      //
+////////////////////////////////////////////////////////////////////////////////
+function main()
+=======
 ///@brief Callback for when Exit Button gets pressed.
 ///@returns None
 function onExitButtonPressed()
+>>>>>>> Dev
 {
     _gui.disableButtonsForExit();
     _cutterCore.stop();

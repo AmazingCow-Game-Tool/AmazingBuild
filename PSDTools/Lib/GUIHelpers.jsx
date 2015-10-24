@@ -3,8 +3,8 @@
 //               ████████                                                     //
 //             ██        ██                                                   //
 //            ███  █  █  ███                                                  //
-//            █ █        █ █                                                  //
-//             ████████████         PSDCutter.jsx - AmazingBuild              //
+//            █ █        █ █        GUIHelpers.jsx                            //
+//             ████████████         AmazingBuild                              //
 //           █              █       Copyright (c) 2015 AmazingCow             //
 //          █     █    █     █      www.AmazingCow.com                        //
 //          █     █    █     █                                                //
@@ -39,17 +39,71 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-// Constants //
-kPSDCutter_Version = "0.1.1";
+function GUIHelpers()
+{
 
-//Import the needed helper functions.
-#include "PSDCutterCore.jsx"
+}
 
-//Create the PSDCutterCore object, sets the
-//processing callback and start the processing...
-cutterCore = new PSDCutterCore();
+GUIHelpers.addPanel = function(parent, name, title, alignment)
+{
+    parent[name] = parent.add("panel", undefined, title);
+    if(alignment != undefined)
+        parent[name].alignChildren = alignment;
+}
 
-cutterCore.saveScenesOnFolders  = true;
-cutterCore.savePrefabsOnFolders = true;
+////////////////////////////////////////////////////////////////////////////////
+// Groups                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+GUIHelpers.addGroup = function(parent, name)
+{
+    parent[name] = parent.add("group");
+}
+GUIHelpers.addGroups = function(parent, namesArr)
+{
+    for(var i = 0; i < namesArr.length; ++i)
+        GUIHelpers.addGroup(parent, namesArr[i]);
+}
 
-cutterCore.run();
+////////////////////////////////////////////////////////////////////////////////
+// Groups                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+GUIHelpers.addLabel = function(parent, name, title)
+{
+    parent[name] = parent.add("statictext", undefined, title);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Groups                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+GUIHelpers.addTextField = function(parent, name, contents, size)
+{
+    parent[name] = parent.add("edittext", undefined, contents);
+
+    if(size != undefined)
+        parent[name].preferredSize = size;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Groups                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+GUIHelpers.addButton = function(parent, name, title, callback, size)
+{
+    parent[name] = parent.add("button", undefined, title);
+
+    if(callback != undefined)
+        parent[name].onClick = callback;
+
+    if(size != undefined)
+        parent[name].preferredSize = size;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Groups                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+GUIHelpers.addCheckbox = function(parent, name, title, checked)
+{
+    parent[name] = parent.add("checkbox", undefined, title);
+
+    if(checked != undefined)
+        parent[name].value = checked;
+}

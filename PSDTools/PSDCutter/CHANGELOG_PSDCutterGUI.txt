@@ -1,0 +1,46 @@
+////////////////////////////////////////////////////////////////////////////////
+// VERSION 0.1.x                                                              //
+////////////////////////////////////////////////////////////////////////////////
+version 0.1.2:
+[Sep 02 2015] - Update the Main Dialog to a bigger size, we previous runs
+                we find that it was too small to check the output path
+                in deeply nested folders, and the script output text box
+                runs out of space very shortly, requiring that uses scrolls
+                frequently.
+                Disables the build button if no documents are open.
+
+version 0.1.3:
+[Sep 08 2015] - Add the ability to specify a Post Run Script for execution
+                when the PSDCutterCore ends the processing.
+                Add the ability to select if the Scenes and Prefabs will be
+                saved in separated folders.
+
+version 0.1.4:
+[oct 12 2015] - Fix bug on about dialog of PSDCutterGUI.
+                The about dialog is failing due a hardcoded font that was
+                maybe not preent in all systems.
+
+////////////////////////////////////////////////////////////////////////////////
+// VERSION 0.2.x                                                              //
+////////////////////////////////////////////////////////////////////////////////
+version 0.2.0
+[Oct 24 2015] - Big, big change.
+                Rewrite the GUI code.
+                Create a helper file at ./PSDCutterCore/GUI.jsx to
+                help the GUI creation.
+                Unify the versions into a single file.
+                Split the CHANGELOG file.
+                Remove some widgets from UI.
+
+
+
+
+
+
+
+
+
+
+
+
+

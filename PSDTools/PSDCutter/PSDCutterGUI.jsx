@@ -40,378 +40,117 @@
 //----------------------------------------------------------------------------//
 
 //Import the needed helper functions.
-#include "PSDCutterCore.jsx"
-
-// Constants //
-kPSDCutterGUI_Version = "0.1.3";
+#include "PSDCutterCore.jsx";    //The core functionality
+#include "PSDCutterGUI/GUI.jsx"; //The GUI creation code.
 
 // Vars //
-var cutterCore     = null;
-var dialog         = null;
-var postScriptPath = null;
-
-// Constants //
-kWindowTitle = "AmazingCow - PSDCutter - v" + kPSDCutterGUI_Version;
+var _cutterCore = null;
+var _gui        = null;
 
 ////////////////////////////////////////////////////////////////////////////////
-// GUI Helpers                                                                //
+// Script Initialization                                                      //
 ////////////////////////////////////////////////////////////////////////////////
-var addPanel = function(parent, name, title, alignment)
+function main()
 {
-    parent[name] = parent.add("panel", undefined, title);
-    if(alignment != undefined)
-        parent[name].alignChildren = alignment;
-}
-var addGroup = function(parent, name)
-{
-    parent[name] = parent.add("group");
-}
-var addLabel = function(parent, name, title)
-{
-    parent[name] = parent.add("statictext", undefined, title);
-}
-var addTextField = function(parent, name, contents, size)
-{
-    parent[name] = parent.add("edittext", undefined, contents);
-    if(size != undefined)
-        parent[name].preferredSize = size;
-}
-var addButton = function(parent, name, title, size)
-{
-    parent[name] = parent.add("button", undefined, title);
-    if(size != undefined)
-        parent[name].preferredSize = size;
-}
-var addCheckbox = function(parent, name, title)
-{
-    parent[name] = parent.add("checkbox", undefined, title);
+    //Create the objects.
+    _cutterCore = new PSDCutterCore();
+    _gui        = new GUI();
+
+    //Set the GUI options.
+    _gui.defaultOutputPath            = PSDCutterCore.kDefaultOutputPath;
+    _gui.onBuildButtonPressedCallback = onBuildButtonPressed;
+    _gui.onExitButtonPressedCallback  = onExitButtonPressed;
+
+    _gui.show();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Configuration Panel                                                        //
+// Dialog Functions                                                           //
 ////////////////////////////////////////////////////////////////////////////////
-var createConfigurationPanel = function()
+function showSuccessDialog()
 {
-    //Create the Configuration Panel.
-    addPanel(dialog, "configPanel", "Configuration");
+    var cutterCoreMsg = "PSDCutterCore - Completed successfully...";
+    var scriptMsg     = "";
 
-    //Create the groups.
-    with(dialog)
+    //Execute the post script file if any is set.
+    if(_gui.getPostScriptPath() != null)
     {
-        addGroup(configPanel, "outputGroup");
-        addGroup(configPanel, "saveFoldersGroup");
+        var f = new File(postScriptPath);
+        scriptMsg = (f.execute())
+                     ? "Post Run Script - Was executed..."
+                     : "Post Run Script - Was NOT executed...";
     }
 
-    with(dialog.configPanel)
-    {
-        //Label.
-        addLabel(outputGroup, "label", "Output Folder:");
-
-        //Text Field.
-        addTextField(outputGroup,
-                     "textField",
-                     PSDCutterCore.kDefaultOutputDir,
-                     [400, 20]);
-
-        //Browse Button.
-        addButton(outputGroup, "browseButton", "...", [40, 20]);
-        outputGroup.browseButton.onClick = onOutputBrowseButtonPressed;
-
-        //Scenes / Prefabs checkboxes.
-        var msg = "Save scenes on separated folders";
-        addCheckbox(saveFoldersGroup, "scenesCheckbox", msg);
-
-        msg = "Save prefabs on separated folders";
-        addCheckbox(saveFoldersGroup, "prefabsCheckbox", msg);
-    }
+    //Build the msg.
+    var fullMsg = PSDHelpers.String.concat("Done...\n",
+                                           cutterCoreMsg,
+                                           "\n",
+                                           scriptMsg);
+    alert(fullMsg);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Post Run Panel                                                             //
-////////////////////////////////////////////////////////////////////////////////
-var createPostRunPanel = function()
+function showStopDialog()
 {
-    //Create the PostRun Panel.
-    addPanel(dialog, "postRunPanel", "Post Run");
-    //Create the PostRun Group.
-    with(dialog)
-    {
-        addGroup(postRunPanel, "postRunGroup");
-    }
-    //Create the PostRun UI elements.
-    with(dialog.postRunPanel)
-    {
-        addLabel    (postRunGroup, "label",        "Script path:");
-        addTextField(postRunGroup, "textField",    "",    [400, 20]);
-        addButton   (postRunGroup, "browseButton", "...", [40, 20]);
-
-        //Set the callback
-        postRunGroup.browseButton.onClick = onPostRunBrowseButtonPressed;
-    }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// ScriptOutput Panel                                                         //
-////////////////////////////////////////////////////////////////////////////////
-var createScriptOutputPanel = function()
-{
-    //Create the Script Output Panel.
-    addPanel(dialog, "outputPanel", "Script Output:");
-
-    //Create the Output Group.
-    with(dialog)
-    {
-        addGroup(outputPanel, "outputGroup");
-    }
-
-    //Add the field.
-    with(dialog.outputPanel)
-    {
-        outputGroup.textField = outputGroup.add("edittext",
-                                                 undefined,
-                                                "",
-                                                {multiline:true});
-        outputGroup.textField.preferredSize = [550, 400];
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Buttons Panel                                                              //
-////////////////////////////////////////////////////////////////////////////////
-var createButtonsPanel = function()
-{
-    //Create the Buttons Panel.
-    //COWOTODO: Find way to make the group border hidden.
-    addPanel(dialog, "buttonPanel", "");
-    dialog.buttonPanel.orientation = "row";
-
-    with(dialog)
-    {
-        //Number of openned documents. We will disable build
-        //button if there is no document opened.
-        var docsCount = app.documents.length;
-
-        //Build Button.
-        addButton(buttonPanel, "buildButton", "Build");
-        buttonPanel.buildButton.onClick = onBuildButtonPressed;
-        //Disable if no documents are open.
-        if(docsCount == 0)
-            buttonPanel.buildButton.enabled = false;
-
-        //Exit Button.
-        addButton(buttonPanel, "exitButton", "Exit");
-        buttonPanel.exitButton.onClick = onExitButtonPressed;
-
-        //About Button.
-        addButton(buttonPanel, "aboutButton", "About");
-        buttonPanel.aboutButton.onClick = onAboutButtonPressed;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Create GUI                                                                 //
-////////////////////////////////////////////////////////////////////////////////
-// GUI Creation //
-///@brief Create the Script GUI.
-///@returns None
-var createGUI = function()
-{
-    //Create the Dialog.
-    dialog = new Window("dialog", kWindowTitle);
-    dialog.frameLocation = [100, 100];
-
-    //Create the Dialog UI.
-    createConfigurationPanel();
-    createPostRunPanel();
-    createScriptOutputPanel();
-    createButtonsPanel();
+    _cutterCore.stop();
+    alert("Script processing stopped.");
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Button Callbacks                                                           //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
-var onBuildButtonPressed = function()
+function onBuildButtonPressed()
 {
-    //Check if the data fields have valid data.
-    if(!checkDialogDataFields())
-        return;
+    _gui.disableButtonsForBuild();
 
-    //Disable the buttons.
-    dialog.configPanel.outputGroup.browseButton.enabled = false;
-    dialog.buttonPanel.buildButton.enabled              = false;
+    //Get the options from GUI.
+    var outpath          = _gui.getOutputPath           ();
+    var scenesOnFolders  = _gui.isToSaveScenesOnFolders ();
+    var prefabsOnFolders = _gui.isToSavePrefabsOnFolders();
 
-    outpath     = dialog.configPanel.outputGroup.textField.text;
-    saveFolders = dialog.configPanel.saveFoldersGroup.scenesCheckbox.value;
-    savePrefabs = dialog.configPanel.saveFoldersGroup.scenesCheckbox.value;
+    var generateLogs = _gui.isToSaveLogs();
 
-    //Create the PSDCutterCore object, sets the
-    //processing callback and start the processing...
-    cutterCore = new PSDCutterCore();
+    var respectBB  = _gui.isToRespectBoundingBox             ();
+    var buttonsBB  = _gui.isToHaveButtonsImplicityBoundingBox();
+    var addPadding = _gui.isToAddPadding                     ();
 
-    cutterCore.outputPath           = outpath;
-    cutterCore.saveScenesOnFolders  = saveFolders;
-    cutterCore.savePrefabsOnFolders = savePrefabs;
-    cutterCore.processingCallback   = onProcessingCallback;
 
-    var retVal = cutterCore.run();
+    //Set the PSDCutterCore options.
+    _cutterCore.outputPath = outpath;
 
+    _cutterCore.saveScenesOnFolders  = scenesOnFolders;
+    _cutterCore.savePrefabsOnFolders = prefabsOnFolders;
+
+    _cutterCore.respectBoundingBoxLayers      = respectBB;
+    _cutterCore.implicityButtonsBoundingBoxes = buttonsBB;
+    _cutterCore.addPadding                    = addPadding;
+
+//~     _cutterCore.processingCallback   = onProcessingCallback;
+
+
+    //Run the PSDCutterCore.
+    var retVal = _cutterCore.run();
+
+    //Show the completion dialog.
     if(retVal == PSDCutterCore.kScriptWasCompleted)
-    {
-        var cutterCoreMsg = "PSDCutterCore - Completed sucessfully...";
-        var scriptMsg     = "";
+        showSuccessDialog();
+    else
+        showStopDialog();
 
-        if(postScriptPath != null)
-        {
-            var f = new File(postScriptPath);
-            if(f.execute())
-                scriptMsg = "Post Run Script - Was executed...";
-            else
-                scriptMsg = "Post Run Script - Was NOT executed...";
-        }
 
-        alert(strConcat("Done...", "\n", cutterCoreMsg, "\n", scriptMsg));
-        dialog.close();
-    }
-}
-
-//COWTODO: Comment.
-var onExitButtonPressed = function()
-{
-    //Disable the exit button.
-    dialog.buttonPanel.exitButton.enabled = false;
-
-    if(cutterCore != null)
-    {
-        cutterCore.stop();
-        alert("Script processing stopped.");
-    }
-
-    dialog.close();
-}
-//COWTODO: Comment.
-var onOutputBrowseButtonPressed = function()
-{
-    var retVal = Folder.selectDialog();
-    if(retVal != null)
-        dialog.configPanel.outputGroup.textField.text = retVal;
-}
-
-var onPostRunBrowseButtonPressed = function()
-{
-    var retVal = File.openDialog();
-    if(retVal != null)
-    {
-        dialog.postRunPanel.postRunGroup.textField.text = retVal;
-        postScriptPath = retVal;
-    }
+    _gui.close();
 }
 
 
-//COWTODO: Comment.
-var onAboutButtonPressed = function()
+
+///@brief Callback for when Exit Button gets pressed.
+///@returns None
+function onExitButtonPressed()
 {
-    msg  = "PSDCutter:\n";
-    msg += "   N2OMatt <n2omatt@amazingcow.com> \n";
-    msg += "   Copyright (c) 2015 - Amazing Cow \n";
-    msg += "\n";
-    msg += "   This is a free software (GPLv3) - Share/Hack it \n";
-    msg += "   Check opensource.amazingcow.com for more :) \n";
-    msg += "\n";
-    msg += "Components:\n";
-    msg += "   PSDCutterGUI  - " + kPSDCutterGUI_Version + "\n"
-    msg += "   PSDCutterCore - " + kPSDCutterCore_Version + "\n";
-    msg += "   PSDHelpers    - " + kPSDHelpers_Version;
-
-    //Create the Dialog.
-    infoDialog = new Window("dialog", "Info");
-    infoDialog.frameLocation = [100, 100];
-
-    //Label.
-    infoDialog.label = infoDialog.add("edittext",
-                                       undefined,
-                                       msg,
-                                       {multiline:true});
-
-    infoDialog.label.graphics.font = ScriptUI.newFont("Droid Sans Mono",
-                                                      ScriptUI.FontStyle.BOLD,
-                                                      12);
-    infoDialog.label.preferredSize = [390, 170];
-
-    //Close Button.
-    addButton(infoDialog, "button", "Close");
-    infoDialog.button.onClick = function() {
-        infoDialog.close();
-    }
-
-    infoDialog.show();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// PSDCutterCore Callbacks                                                   //
-////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
-var onProcessingCallback = function(msg)
-{
-    dialog.outputPanel.outputGroup.textField.text += msg + "\n";
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Helper Functions                                                           //
-////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Comment.
-var checkDialogDataFields = function()
-{
-    //Check if the output path is valid.
-    var outputPath = dialog.configPanel.outputGroup.textField.text;
-    outputPath = strip(outputPath, " ");
-
-    var tmpFolder = Folder(outputPath);
-
-    //Path is a File.
-    if(tmpFolder instanceof File)
-    {
-        alert("Output path ("+outputPath+") refers to a file.");
-        return false;
-    }
-
-    //Path is empty.
-    if(outputPath.length == 0)
-    {
-        alert("Output path is empty.");
-        return false;
-    }
-
-    //Path does not exists, so create one.
-    if(!tmpFolder.exists)
-    {
-        //Cannot create.
-        if(!tmpFolder.create())
-        {
-            str = strConcat("Output path (",
-                            outputPath,
-                            ") is invalid\nFolder cannot be created.");
-            alert(str);
-            return false;
-        }
-    }
-
-    //All data are valid.
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Script Initialization                                                      //
-////////////////////////////////////////////////////////////////////////////////
-//COWTODO: COMMENT.
-function main()
-{
-    createGUI();
-    dialog.show();
+    _gui.disableButtonsForExit();
+    _cutterCore.stop();
+    _gui.close();
 }
 
 //Starts the script.

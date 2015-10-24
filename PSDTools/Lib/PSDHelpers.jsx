@@ -38,83 +38,22 @@
 //                                                                            //
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
-// Constants //
-kPSDHelpers_Version = "0.1.4";
+
+var PSDHelpers = function(){};
 
 ////////////////////////////////////////////////////////////////////////////////
-// Object Type                                                                //
+//                                                                            //
+// String                                                                     //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
-function ObjectType()
-{
-    // Empty //
-};
 
-// Constants //
-ObjectType.Prefabs   = "Prefabs";
-ObjectType.Sprite    = "Sprite";
-ObjectType.Scene     = "Scene";
-ObjectType.Button    = "Button";
-ObjectType.Ignorable = "Ignorable";
-ObjectType.Unknown   = "Unknown";
+//Namespace like.
+PSDHelpers.String = function() {};
 
-//COWTODO: Doxygen Comment.
-ObjectType.findObjectType = function(group)
-{
-    var name = group.name;
-
-    if(name[0] == "_")                        return ObjectType.Ignorable;
-    if(name == ObjectType.Prefabs           ) return ObjectType.Prefabs;
-    if(name.indexOf(ObjectType.Sprite) != -1) return ObjectType.Sprite;
-    if(name.indexOf(ObjectType.Scene ) != -1) return ObjectType.Scene;
-    if(name.indexOf(ObjectType.Button) != -1) return ObjectType.Button;
-
-    return ObjectType.Unknown;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Log                                                                        //
-////////////////////////////////////////////////////////////////////////////////
-// Variables //
-var logFile;
-
-//COWTODO: Doxygen Comment.
-function log(str)
-{
-    logFile.writeln(str);
-};
-
-//COWTODO: Doxygen Comment.
-function openLog(name, path, enabled)
-{
-    //COWTODO: Comment.
-    if(enabled)
-    {
-        logFile = File(path + name + ".txt");
-        $.writeln(logFile.absoluteURI);
-        logFile.open("w");
-    }
-    else
-    {
-         logFile = $;
-    }
-};
-
-//COWTODO: Doxygen Comment.
-function closeLog()
-{
-    //COWTODO: Comment.
-    if(logFile != $)
-        logFile.close();
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-// String Functions                                                           //
-////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen comment.
-function strConcat()
+///@brief Concat several strings. Like the python's "".join(list_of_strings).
+///@param A variable length of strings.
+///@returns A concatenated string.
+PSDHelpers.String.concat = function()
 {
     var fullStr = "";
     for(var i = 0; i < arguments.length; ++i)
@@ -122,11 +61,12 @@ function strConcat()
     return fullStr;
 };
 
+
 ///@brief Remove all occurrences of ch from the left of str.
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
 ///@returns A new string with the chars removed.
-function lstrip(str, ch)
+PSDHelpers.String.lstrip = function(str, ch)
 {
     index = -1;
     for(var i = 0; i < str.length; ++i)
@@ -140,6 +80,7 @@ function lstrip(str, ch)
 
     if(index == -1)
         return "";
+
     return str.substr(index, str.length);
 };
 
@@ -147,7 +88,7 @@ function lstrip(str, ch)
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
 ///@returns A new string with the chars removed.
-function rstrip(str, ch)
+PSDHelpers.String.rstrip = function(str, ch)
 {
     index = str.length;
     for(var i = str.length -1; i >= 0; --i)
@@ -165,7 +106,7 @@ function rstrip(str, ch)
 ///@param str The string that will be cleaned.
 ///@param ch  The char that will be removed.
 ///@returns A new string with the chars removed.
-function strip(str, ch)
+PSDHelpers.String.strip = function(str, ch)
 {
     return rstrip(lstrip(str, ch), ch);
 };
@@ -173,7 +114,7 @@ function strip(str, ch)
 ///@brief Remove all occurrences of whitespace char from the string.
 ///@param str The string that will be cleaned.
 ///@returns A new string with all whitespace removed.
-function removeSpaces(str)
+PSDHelpers.String.removeSpaces = function(str)
 {
     while(str.indexOf(" ") != -1)
         str = str.replace(" ", "");
@@ -182,13 +123,20 @@ function removeSpaces(str)
 };
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 // Filesystem Functions                                                       //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+
+//Namepace like.
+PSDHelpers.FS = function(){};
+
 ///@brief Join the paths components in the same way of python's os.path.join
 ///@param A variable length of path components.
 ///@returns A string with all path components joined without the trailing /.
-function pathJoin()
+PSDHelpers.FS.pathJoin = function()
 {
     //COWTODO: Today this method is very *nix centered, should we support windows?
     var fullpath = "";
@@ -202,138 +150,113 @@ function pathJoin()
     return fullpath;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// PSDDocument                                                                //
-////////////////////////////////////////////////////////////////////////////////
-function PSDDocument()
+//COWTODO: Add Doxygen comments.
+PSDHelpers.FS.createFolder = function(path, removeIfExists)
 {
-    // Empty //
-};
+    var folder = new Folder(path);
+    if(folder.exists)
+        folder.remove();
+    folder.create();
 
-///@brief Create a new Photoshop document.
-///@param filename The filename of the new document.
-///@param width Width of the new document.
-///@param height Height of the new document.
-///@param documentActiveAfterCreation Which document will be set as the
-///       app.activeDocument. If no document is passed, the created one
-///       is set to active.
-///@returns The new created document.
-PSDDocument.create = function(filename, width, height, documentActiveAfterCreation)
-{
-    var newDoc = app.documents.add(width,                     //Width of layer.
-                                   height,                    //Height of layer.
-                                   72,                        //DPI.
-                                   filename,                  //Complete filename.
-                                   NewDocumentMode.RGB,       //Document Mode.
-                                   DocumentFill.TRANSPARENT); //Fill type.
+    return folder;
+}
 
-    //If documentActiveAfterCreation is not undefined means that we
-    //must set the App Active Document to this document.
-    if(documentActiveAfterCreation != undefined)
-        app.activeDocument = documentActiveAfterCreation;
 
-    return newDoc;
-};
 
-///@brief Save the document to a file with the extension PSD.
-///@param doc The Photoshop document that will be saved.
-///@param filename The fullpath of the file that will be created to save the doc.
-///@returns Nothing
-PSDDocument.save = function(doc, filename)
-{
-    var file = new File(filename);
-    doc.saveAs(file, SaveDocumentType.PHOTOSHOP , true, Extension.LOWERCASE);
-};
-
-///@brief Save the document to a file with the extension PNG.
-///@param doc The Photoshop document that will be saved.
-///@param filename The fullpath of the file that will be created to save the doc.
-///@returns Nothing
-PSDDocument.export = function(doc, filename)
-{
-    var file = new File(filename);
-    doc.saveAs(file, SaveDocumentType.PNG, true, Extension.LOWERCASE);
-};
-
-///@brief Close the document without save.
-///@param doc The Photoshop document that will be closed.
-///@returns Nothing
-PSDDocument.close = function(doc)
-{
-    doc.close(SaveOptions.DONOTSAVECHANGES);
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Layer Functions                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Doxygen Comment.
 function PSDLayer()
 {
     // Empty //
 };
 
-//COWTODO: Doxygen Comment.
-PSDLayer.duplicate = function(layer, intoDocument, merge, documentActiveAfterOperation)
-{
-    //Duplicate the layer into the document and merge if needed.
-    var duplicatedLayer = layer.duplicate(intoDocument,
-                                          ElementPlacement.INSIDE);
-
-    app.activeDocument = intoDocument;
-
-    app.activeDocument.revealAll();
-    app.activeDocument.trim(TrimType.TRANSPARENT);
-
-    if(merge)
-        duplicatedLayer = duplicatedLayer.merge();
-
-    if(documentActiveAfterOperation != undefined)
-        app.activeDocument = documentActiveAfterOperation;
-
-    return duplicatedLayer;
-};
-
-//COWTODO: Doxygen Comment.
-PSDLayer.setPosition = function(layer, x, y)
-{
-    var pos = getLayerPosition(layer);
-
-    pos[0] = x - pos[0];
-    pos[1] = y - pos[1];
-
-    layer.translate(pos[0], pos[1]);
-};
-
-//COWTODO: Doxygen Comment.
+///@brief Get the x and y coordinates of the layer.
+///@param The layer that will be queried.
+///@returns An array of two floats representing the x and y.
 PSDLayer.getPosition = function(layer)
 {
+    if(layer == null)
+        return [0, 0];
+
     return [layer.bounds[0].value, layer.bounds[1].value];
 };
 
-//COWTODO: Doxygen Comment.
+///@brief Get the width and height of the layer.
+///@param The layer that will be queried.
+///@warning THIS FUNCTION MIGHT CONTAIN A BUG. SEE IT'S COMMENTS.
+///@returns An array of two floats representing the width and height.
 PSDLayer.getSize = function(layer)
 {
-    var pos = PSDLayer.getPosition(layer);
-    return [Math.abs(pos[0] - layer.bounds[2].value),
-            Math.abs(pos[1] - layer.bounds[3].value)];
+    if(layer == null)
+        return [0, 0];
+
+    //Just to ease the typing.
+    var doc = app.activeDocument;
+
+    //Merge a duplicated layer, so the original one keeps untouched.
+    //Get its bounds and remove it. Also restore the history state.
+    var duplicatedLayer = layer.duplicate();
+    duplicatedLayer     = duplicatedLayer.merge();
+    var bounds          = duplicatedLayer.bounds;
+    duplicatedLayer.remove();
+
+    //Seems that Photoshop (at least the CS6 for OSX) contains
+    //a strange bug, that while pass unnoticed in the GUI usage
+    //when is used in scripts make a big difference.
+    //The bug is that PS place the objects with 1px offset from
+    //the position reported in the GUI. So when you place a layer
+    //in the position xy(0,0) it's actually being placed in the
+    //position xy(-1, -1).
+    //This affects the width and height of the object of the same
+    //amount, so it will have a +1 width and +1 height.
+    //I do not know if this is a real bug or it's me making some
+    //wrong stuff. I'm checked and rechecked my calculations and
+    //seems that it's right, making the other possibility (the PS bug)
+    //more plausible for me.
+    //I only have a PSCS6 at OSX 10.10, so I do not know how this code
+    //will behave in another systems and PS versions.
+    //SOLUTION:
+    //  Since it is offsetting all the bounds' values by the same amount
+    //  is pretty easy to figure out that we just have to subtract them :).
+    //
+    var x = bounds[0];
+    var y = bounds[1];
+    var w = bounds[2];
+    var h = bounds[3];
+
+
+    return [w - Math.abs(x),
+            h - Math.abs(y)];
 };
 
-//COWTODO: Doxygen Comment.
-PSDLayer.center = function(layer)
-{
-    var docW      = app.activeDocument.width;
-    var docH      = app.activeDocument.height;
-    var docCenter = [docW / 2, docH / 2];
 
-    var layerPos    = PSDLayer.getPosition(layer);
-    var layerSize   = PSDLayer.getSize(layer);
-    var layerCenter = [layerSize[0] / 2, layerSize[1] / 2];
 
-    PSDLayer.setPosition(layer,
-                         docCenter[0],
-                         docCenter[1]);
 
-    PSDLayer.setPosition(layer,
-                         docCenter[0] - layerCenter[0],
-                         docCenter[1] - layerCenter[1]);
-};
+//COWTODO: check.
+//http://www.smashingmagazine.com/2014/01/understanding-javascript-function-prototype-bind/
+//
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (oThis) {
+    if (typeof this !== "function") {
+      // closest thing possible to the ECMAScript 5 internal IsCallable function
+      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+        fToBind = this,
+        fNOP = function () {},
+        fBound = function () {
+          return fToBind.apply(this instanceof fNOP && oThis
+                                 ? this
+                                 : oThis,
+                               aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}

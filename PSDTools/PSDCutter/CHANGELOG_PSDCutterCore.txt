@@ -1,0 +1,39 @@
+////////////////////////////////////////////////////////////////////////////////
+// VERSION 0.1.x                                                              //
+////////////////////////////////////////////////////////////////////////////////
+version 0.1.1
+[Sep 02 2015] - Update the run code to show an alert box if no open documents
+                are found.
+                Put a dummy default output folder in case of no open documents
+                just to not crash the script.
+
+version 0.1.2
+[Sep 08 2015] - Add the ability to select if the Scenes and Prefabs will be
+                saved in separated folders.
+                Change the saveLayer signature, so now it just asks for the
+                save name of the layer instead of fullpath.
+
+version 0.1.3
+[Sep 24 2015] - Make PSDCutterCore use the new PSDHelpers (v0.1.4).
+                Fix some bugs on Button's disabledLayer settings.
+
+
+////////////////////////////////////////////////////////////////////////////////
+// VERSION 0.2.x                                                              //
+////////////////////////////////////////////////////////////////////////////////
+version 0.2.0   *** THIS VERSION DOES NOT SUPPORT PREFABS ***
+[Oct 24 2015] - Big, big change.
+                Add support for boundingBox layesrs.
+                Add support for padding.
+                Add new constants.
+                Remove unneeded methods.
+                Rewrite most of functions.
+                Add a lot of comments.
+                Grab a lot of stuff that is specific to PSDCutterCore
+                from the PSDHelpers and put it into a "lib file" at
+                ./PSDCutterCore/Helpers.jsx
+                Unify the versions into a single file.
+                Split the CHANGELOG files.
+
+
+

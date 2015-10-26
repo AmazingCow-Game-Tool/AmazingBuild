@@ -35,5 +35,5 @@ version 0.2.0   *** THIS VERSION DOES NOT SUPPORT PREFABS ***
                 Unify the versions into a single file.
                 Split the CHANGELOG files.
 
-
-
+version 0.2.1
+[Oct 24 2015] - Add (again) support for Prefabs layers.

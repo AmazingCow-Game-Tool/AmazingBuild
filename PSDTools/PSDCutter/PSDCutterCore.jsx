@@ -270,7 +270,51 @@ PSDCutterCore.prototype._processScene = function(scene)
 ///@returns None
 ///@seealso ObjectType
 PSDCutterCore.prototype._processPrefabs = function(prefabs)
-{};
+{
+    //Script was stopped by outside request. Do not do anything
+    if(this._shouldStop)
+        return;
+
+    //Save a reference for the current document.
+    var originalDoc = app.activeDocument;
+
+    for(var i = 0; i < prefabs.layers.length; ++i)
+    {
+        var smartObject = prefabs.layers[i];
+
+        //If is defined to save the scene into
+        //a separated folder create one now.
+        if(this.savePrefabsOnFolders)
+        {
+            var fullpath = PSDHelpers.FS.pathJoin(this.outputPath, smartObject.name);
+            PSDHelpers.FS.createFolder(fullpath);
+
+            this._currentSaveName = smartObject.name;
+        }
+
+        //Check if we're dealing with a group to ignore.
+        if(ObjectType.findObjectType(smartObject) == ObjectType.Ignorable)
+            continue;
+
+        //Open a smartobject.
+        this._sourceDoc.activeLayer = prefabs.layers[i];
+        var idAction = stringIDToTypeID("placedLayerEditContents");
+        var idDesc   = new ActionDescriptor();
+        executeAction(idAction, idDesc, DialogModes.NO);
+
+        var currDoc = app.activeDocument;
+        this._sourceDoc = currDoc;
+
+        //Process the objects inside the smartobject.
+        for(var j = 0; j < currDoc.layers.length; ++j)
+            this._processObject(currDoc.layers[j]);
+
+        currDoc.close(SaveOptions.DONOTSAVECHANGES);
+        this._sourceDoc = originalDoc
+    }
+
+    this._sourceDoc = originalDoc;
+};
 
 ///@brief Process (Save its contents) an object.
 ///@param prefabs A "layerset" with ObjectType.Sprite,
@@ -288,10 +332,16 @@ PSDCutterCore.prototype._processObject = function(obj)
         return;
 
     //Process the object based and it's type.
-    if(ObjectType.findObjectType(obj) == ObjectType.Sprite)
+    var objType = ObjectType.findObjectType(obj);
+    if(objType == ObjectType.Sprite)
         this._processSprite(obj);
-    else if(ObjectType.findObjectType(obj) == ObjectType.Button)
+    else if(objType == ObjectType.Button)
         this._processButton(obj);
+    else if(objType == ObjectType.Scene) //This enables Scenes inside Scenes|Prefabs...
+        this._processScene(obj);
+    else if(objType == ObjectType.Prefabs) //This enables Prefabs inside Scenes|Prefabs...
+        this._processPrefabs(obj);
+
 };
 
 ///@brief Process (Save its contents) a Sprite.

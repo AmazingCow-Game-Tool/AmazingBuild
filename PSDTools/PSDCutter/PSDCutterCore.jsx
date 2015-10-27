@@ -91,6 +91,10 @@ function PSDCutterCore()
     ///ObjectType.Prefab into separated folder.
     ///@see ObjectType, this.savePrefabsOnFolders.
     this.savePrefabsOnFolders = false;
+
+    //COWTODO: Commnet.
+    this.saveReferenceImage = true; //COWTODO: default should be false.
+
     ///@brief True if PSDCutter should generate the logs.
     ///The location of log file is the same location of the output folder.
     ///@see this.outputPath
@@ -262,6 +266,10 @@ PSDCutterCore.prototype._processScene = function(scene)
     //Iterate for each element of scene and process it.
     for(var i = 0; i < scene.layers.length; ++i)
         this._processObject(scene.layers[i]);
+
+    //COWTODO: Comment.
+    if(this.saveReferenceImage)
+        this._saveRefImage(scene);
 };
 
 ///@brief Iterate of all objects in Prefabs
@@ -505,4 +513,17 @@ PSDCutterCore.prototype._getAddPadding = function()
         return PSDCutterCore.kDefaultPadding;
 
     return [0,0];
+}
+
+//COWTODO: Comment.
+PSDCutterCore.prototype._saveRefImage = function(layer)
+{
+    var duplicatedLayer = layer.duplicate();
+    duplicatedLayer     = duplicatedLayer.merge();
+
+    this._saveLayer(layer,
+                    PSDHelpers.String.concat(layer.name, "_REF.png"),
+                    [0, 0]);
+
+    duplicatedLayer.remove();
 }

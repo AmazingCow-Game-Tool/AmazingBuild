@@ -108,7 +108,7 @@ PSDHelpers.String.rstrip = function(str, ch)
 ///@returns A new string with the chars removed.
 PSDHelpers.String.strip = function(str, ch)
 {
-    return rstrip(lstrip(str, ch), ch);
+    return PSDHelpers.String.rstrip(PSDHelpers.String.lstrip(str, ch), ch);
 };
 
 ///@brief Remove all occurrences of whitespace char from the string.

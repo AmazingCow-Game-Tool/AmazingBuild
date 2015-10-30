@@ -86,7 +86,10 @@ ObjectType.canonizeName = function(name)
     else if(name.indexOf(ObjectType.Button) != -1) type = ObjectType.Button;
 
     var cleanName = name.replace(type, "").replace("_", "");
-    return PSDHelpers.String.concat(type, "_", cleanName);
+    cleanName = PSDHelpers.String.concat(type, "_", cleanName);
+
+    cleanName = PSDHelpers.String.strip(cleanName, " ");
+    return cleanName;
 }
 
 

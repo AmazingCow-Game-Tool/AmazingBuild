@@ -37,3 +37,7 @@ version 0.2.0   *** THIS VERSION DOES NOT SUPPORT PREFABS ***
 
 version 0.2.1
 [Oct 24 2015] - Add (again) support for Prefabs layers.
+
+version 0.2.2
+[Oct 30 2015] - Fix a bug that lets the canonized object type string contains
+                a tralling | leading spaces.

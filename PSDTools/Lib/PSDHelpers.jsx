@@ -150,7 +150,11 @@ PSDHelpers.FS.pathJoin = function()
     return fullpath;
 };
 
-//COWTODO: Add Doxygen comments.
+///@brief Create a folder in the give location.
+///@param path The folder path.
+///@param removeIfExists If the path already is a folder, remove it
+///before create a new one.
+///@returns The folder object.
 PSDHelpers.FS.createFolder = function(path, removeIfExists)
 {
     var folder = new Folder(path);

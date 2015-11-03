@@ -92,8 +92,10 @@ function PSDCutterCore()
     ///@see ObjectType, this.savePrefabsOnFolders.
     this.savePrefabsOnFolders = false;
 
-    //COWTODO: Commnet.
-    this.saveReferenceImage = true; //COWTODO: default should be false.
+    ///@brief If this.saveReferenceImage is true after cut the
+    ///layer object the script will cut the entire layer
+    ///This is util to place the object in another editor more easily.
+    this.saveReferenceImage = false;
 
     ///@brief True if PSDCutter should generate the logs.
     ///The location of log file is the same location of the output folder.
@@ -208,7 +210,9 @@ PSDCutterCore.prototype.stop = function()
 PSDCutterCore.prototype._processStep = function(msg)
 {}
 
-//COWTODO: Add the doxygen comments.
+///@brief Iterate for each layer of the PSD and check if
+///it represents a valid ObjectType, if so, cut it and
+//save the resulting image.
 PSDCutterCore.prototype._startProcessing = function()
 {
     //Iterate for each top object and process it.
@@ -267,7 +271,8 @@ PSDCutterCore.prototype._processScene = function(scene)
     for(var i = 0; i < scene.layers.length; ++i)
         this._processObject(scene.layers[i]);
 
-    //COWTODO: Comment.
+    //User wants a reference image of this layer.
+    //So save it.
     if(this.saveReferenceImage)
         this._saveRefImage(scene);
 };
@@ -470,13 +475,17 @@ PSDCutterCore.prototype._processButton = function(button)
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Methods                                                             //
 ////////////////////////////////////////////////////////////////////////////////
-//COWTODO: Add doxygen docs.
+///@brief  Reset the second part of the path of the images.
+///@see this._currentSaveName, this.saveScenesOnFolders, this.savePrefabsOnFolders.
 PSDCutterCore.prototype._resetCurrentSavePath = function()
 {
     this._currentSaveName = "";
 }
 
-//COWTODO: Add doxygen docs.
+///@brief Cut and save the layer.
+///@param layer The layer that will be saved.
+///@param saveName The name of the layer **NOT** full path.
+///@param padding The amount of blank pixels that will be inserted into image.
 PSDCutterCore.prototype._saveLayer = function(layer, saveName, padding)
 {
     //Script was stopped by outside request. Do not do anything
@@ -515,7 +524,6 @@ PSDCutterCore.prototype._getAddPadding = function()
     return [0,0];
 }
 
-//COWTODO: Comment.
 PSDCutterCore.prototype._saveRefImage = function(layer)
 {
     var duplicatedLayer = layer.duplicate();

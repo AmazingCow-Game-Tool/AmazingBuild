@@ -1,0 +1,14 @@
+SceneFill/Sprite_1.png:2:942:66:76
+SceneFill/Sprite_2.png:437:217:101:118
+SceneFill/Sprite_3.png:316:217:119:138
+SceneFill/Sprite_4.png:504:2:156:182
+SceneFill/Sprite_5.png:241:665:221:256
+SceneFill/Sprite_6.png:2:665:237:275
+SceneFill/Sprite_7.png:2:2:312:361
+SceneTransparent/Sprite_1.png:70:942:55:63
+SceneTransparent/Sprite_2.png:241:923:84:97
+SceneTransparent/Sprite_3.png:797:2:100:115
+SceneTransparent/Sprite_4.png:662:2:133:150
+SceneTransparent/Sprite_5.png:316:2:186:213
+SceneTransparent/Sprite_6.png:267:365:200:228
+SceneTransparent/Sprite_7.png:2:365:263:298

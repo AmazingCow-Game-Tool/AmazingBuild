@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<texture version="1" file="sheet.png" type="bitmap" width="1024" height="1024" pixelformat="RGBA_8888" minfilter="linear" magfilter="linear" wrapt="clamp" wraps="clamp" premultiplyalpha="false">
+    <!-- Created with TexturePacker http://www.codeandweb.com/texturepacker -->
+    <!-- $TexturePacker:SmartUpdate:a83b099ade821580a571acfea1b13fba:9bf92a8dd642b770969fdedd9e67f7c0:46aefd2a54ba380f985deb80fd625cee$ -->
+    <textureregion id="0" src="SceneFill/Sprite_1.png" x="2" y="942" width="66" height="76" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="66" srcheight="76"/>
+    <textureregion id="1" src="SceneFill/Sprite_2.png" x="662" y="2" width="101" height="118" rotated="true" trimmed="false" srcx="0" srcy="0" srcwidth="101" srcheight="118"/>
+    <textureregion id="2" src="SceneFill/Sprite_3.png" x="316" y="217" width="119" height="138" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="119" srcheight="138"/>
+    <textureregion id="3" src="SceneFill/Sprite_4.png" x="504" y="2" width="156" height="182" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="156" srcheight="182"/>
+    <textureregion id="4" src="SceneFill/Sprite_5.png" x="241" y="665" width="221" height="256" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="221" srcheight="256"/>
+    <textureregion id="5" src="SceneFill/Sprite_6.png" x="2" y="665" width="237" height="275" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="237" srcheight="275"/>
+    <textureregion id="6" src="SceneFill/Sprite_7.png" x="2" y="2" width="312" height="361" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="312" srcheight="361"/>
+    <textureregion id="7" src="SceneTransparent/Sprite_1.png" x="70" y="942" width="55" height="63" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="55" srcheight="63"/>
+    <textureregion id="8" src="SceneTransparent/Sprite_2.png" x="241" y="923" width="84" height="97" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="84" srcheight="97"/>
+    <textureregion id="9" src="SceneTransparent/Sprite_3.png" x="782" y="2" width="100" height="115" rotated="true" trimmed="false" srcx="0" srcy="0" srcwidth="100" srcheight="115"/>
+    <textureregion id="10" src="SceneTransparent/Sprite_4.png" x="437" y="217" width="133" height="150" rotated="true" trimmed="false" srcx="0" srcy="0" srcwidth="133" srcheight="150"/>
+    <textureregion id="11" src="SceneTransparent/Sprite_5.png" x="316" y="2" width="186" height="213" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="186" srcheight="213"/>
+    <textureregion id="12" src="SceneTransparent/Sprite_6.png" x="267" y="365" width="200" height="228" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="200" srcheight="228"/>
+    <textureregion id="13" src="SceneTransparent/Sprite_7.png" x="2" y="365" width="263" height="298" rotated="false" trimmed="false" srcx="0" srcy="0" srcwidth="263" srcheight="298"/>
+</texture>

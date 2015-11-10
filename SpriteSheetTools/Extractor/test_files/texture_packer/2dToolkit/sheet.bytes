@@ -1,0 +1,53 @@
+i tk2d 1
+w 1078
+h 504
+~
+n SceneFill/Sprite_1
+s 973 428 76 66
+r 1
+~
+n SceneFill/Sprite_2
+s 294 365 101 118
+~
+n SceneFill/Sprite_3
+s 154 365 138 119
+r 1
+~
+n SceneFill/Sprite_4
+s 815 279 156 182
+~
+n SceneFill/Sprite_5
+s 820 2 256 221
+r 1
+~
+n SceneFill/Sprite_6
+s 581 2 237 275
+~
+n SceneFill/Sprite_7
+s 2 2 312 361
+~
+n SceneTransparent/Sprite_1
+s 316 302 63 55
+r 1
+~
+n SceneTransparent/Sprite_2
+s 973 342 97 84
+r 1
+~
+n SceneTransparent/Sprite_3
+s 973 225 100 115
+~
+n SceneTransparent/Sprite_4
+s 2 365 150 133
+r 1
+~
+n SceneTransparent/Sprite_5
+s 627 279 186 213
+~
+n SceneTransparent/Sprite_6
+s 397 302 228 200
+r 1
+~
+n SceneTransparent/Sprite_7
+s 316 2 263 298
+~

@@ -6,6 +6,7 @@ Amazing Build is a collection of useful programs intended to ease some
 cumbersome operations.   
 The main motivation to this project is make the computer work hard and let you 
 do more useful/creative stuff.   
+
 Right now we have:
 
 * PSDCutter.
@@ -67,7 +68,7 @@ about what is need to do.
 
 ##### SpriteSheet Tools:
 * Maker - (Planned).
-* Extactor - (WIP).
+* Extractor - (WIP).
 
 
 ## More info:
@@ -82,4 +83,4 @@ Since the Amazing Build is a aggregate of several tools, itself hasn't a
 license per se, but all of its programs has its own license.
 
 All of them are open-source licenses but some tools has more permissive licenses 
-like BSD-3 while other has more restritive licenses like GPL-3 and so on.
+like BSD-3 while other has more restrictive licenses like GPL-3 and so on.

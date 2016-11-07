@@ -1,17 +1,26 @@
 # Amazing Build
 
+<!-- ####################################################################### -->
+<!-- ####################################################################### -->
+
 ## About:
 
-Amazing Build is a collection of useful programs intended to ease some 
-cumbersome operations.   
+Amazing Build is a collection of (*hopefully*) useful programs intended 
+to ease some cumbersome operations.   
 The main motivation to this project is make the computer work hard and let you 
 do more useful/creative stuff.   
 
 Right now we have:
 
+### PSDTools:
+
 * PSDCutter.
-* PSDIconMaker.
-* SpriteSheetExtractor. 
+* PSDIconMaker.    
+
+### GimpTools:
+
+* IconMaker.
+
 
 But some other programs is planned to be part of the Amazing Build suite.
 
@@ -23,6 +32,10 @@ We gonna be very proud and happy to see our work being useful to another people.
 
 **Don't be shy, hack it... share it...** 
 
+
+<!-- ####################################################################### -->
+<!-- ####################################################################### -->
+
 ## TODO:
 
 We have a very long list of things that must be done, but our time 
@@ -32,12 +45,12 @@ to help us build them.
 
 Mainly today we have planned:
 
-##### Gimp:
+### Gimp:
 
-* All PSDTools to Gimp, so we can build stuff in a Free Software image editor 
+* All PSDTools to Gimp, so we can build stuff in a **Free Software** image editor 
 and in all platforms.
 
-##### General: 
+### General: 
 
 * SpriteSheetMaker - A tool to build SpriteSheets, similar to TexturePacker but
 made of free software.
@@ -46,30 +59,33 @@ Spritesheet.
 This should be able to extract all formats provided by default in 
 Texture Packer.
 
+#### Notice
 Check each ```TODO``` file inside the desired Amazing Build program to more info
 about what is need to do.
 
-## Projects using the Amazing Build:
 
-* Imidiar Totem - An interactive Photo Totem. (Uses PSDCutter)
-* [Game_Taz](https://github.com/AmazingCow/Game_Taz) - A open source clone of Atari game. (Uses PSDCutter, PSDIconMaker)
-* Gloob - An AmazingCow game of iOS. (Uses PSDCutter, PSDIconMaker)
-
+<!-- ####################################################################### -->
+<!-- ####################################################################### -->
 
 ## Amazing Build programs:
 
-##### PSDTools: 
-* PSDCutter - (WIP).
-* PSDIconMaker - (WIP).
+### PSDTools: 
+Tools that are using within Photoshop:
 
-##### GimpTools:
-* GimpCutter - (Planned).
-* GimpIconMaker - (Planned).
+* PSDCutter    - ```Cut separated sprites from a PSD file.```
+* PSDIconMaker - ```Generate Icons from a PSD file.```
 
-##### SpriteSheet Tools:
-* Maker - (Planned).
+### GimpTools:
+* GimpCutter    - (Planned).
+* GimpIconMaker - ```Generate Icons from a XFC file.```
+
+### SpriteSheet Tools:
+* Maker     - (Planned).
 * Extractor - (WIP).
 
+
+<!-- ####################################################################### -->
+<!-- ####################################################################### -->
 
 ## More info:
 
@@ -77,10 +93,9 @@ A detailed ```README``` ~~is~~ should be found for each Amazing Build's program
 inside of the program's directory. 
 
 
+<!-- ####################################################################### -->
+<!-- ####################################################################### -->
+
 ## Amazing Build License:
 
-Since the Amazing Build is a aggregate of several tools, itself hasn't a 
-license per se, but all of its programs has its own license.
-
-All of them are open-source licenses but some tools has more permissive licenses 
-like BSD-3 while other has more restrictive licenses like GPL-3 and so on.
+All tools are **Free Software** licensed as GPLv3 <3
